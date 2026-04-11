@@ -1,4 +1,5 @@
 import Layout from "@/components/Layout";
+import AnimatedSection from "@/components/AnimatedSection";
 import { useState } from "react";
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -6,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 const Contacto = () => {
   const { toast } = useToast();
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const whatsappUrl = `https://wa.me/50258997508?text=${encodeURIComponent("Hola, me gustaría obtener información sobre sus servicios legales.")}`;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,8 +19,6 @@ const Contacto = () => {
     setForm({ name: "", email: "", subject: "", message: "" });
   };
 
-  const whatsappUrl = `https://wa.me/50258997508?text=${encodeURIComponent("Hola, me gustaría obtener información sobre sus servicios legales.")}`;
-
   return (
     <Layout>
       <section className="bg-primary py-16 text-center">
@@ -29,49 +29,24 @@ const Contacto = () => {
 
       <section className="section-padding bg-background">
         <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Contact Form */}
-          <div>
+          <AnimatedSection>
             <h2 className="font-heading text-2xl font-bold text-foreground mb-6">Envíenos un Mensaje</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Nombre *</label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
-                  className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none"
-                  maxLength={100}
-                />
+                <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none" maxLength={100} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Email *</label>
-                <input
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none"
-                  maxLength={255}
-                />
+                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none" maxLength={255} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Asunto</label>
-                <input
-                  type="text"
-                  value={form.subject}
-                  onChange={(e) => setForm({ ...form, subject: e.target.value })}
-                  className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none"
-                  maxLength={200}
-                />
+                <input type="text" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none" maxLength={200} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Mensaje *</label>
-                <textarea
-                  rows={5}
-                  value={form.message}
-                  onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none resize-none"
-                  maxLength={1000}
-                />
+                <textarea rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none resize-none" maxLength={1000} />
               </div>
               <button type="submit" className="btn-gold flex items-center gap-2">
                 <Send size={16} /> Enviar Mensaje
@@ -79,22 +54,14 @@ const Contacto = () => {
             </form>
 
             <div className="mt-8">
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 bg-[#25D366] text-[#fff] font-semibold px-6 py-3 rounded-md hover:bg-[#20BD5B] transition-colors"
-              >
-                <MessageCircle size={20} />
-                Chat en WhatsApp
+              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#25D366] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#20BD5B] transition-colors">
+                <MessageCircle size={20} /> Chat en WhatsApp
               </a>
             </div>
-          </div>
+          </AnimatedSection>
 
-          {/* Contact Info + Map */}
-          <div>
+          <AnimatedSection delay={0.2}>
             <h2 className="font-heading text-2xl font-bold text-foreground mb-6">Información de Contacto</h2>
-
             <div className="space-y-4 mb-8">
               <div className="flex items-start gap-3">
                 <MapPin className="text-gold mt-1 flex-shrink-0" size={20} />
@@ -119,28 +86,17 @@ const Contacto = () => {
               </div>
             </div>
 
-            {/* Hours */}
             <div className="bg-secondary rounded-lg p-6 mb-8">
               <h3 className="font-heading text-lg font-bold text-foreground mb-4 flex items-center gap-2">
                 <Clock className="text-gold" size={20} /> Horario de Atención
               </h3>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-foreground">Lunes a Viernes</span>
-                  <span className="text-muted-foreground">8:00 - 18:00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-foreground">Sábado</span>
-                  <span className="text-muted-foreground">8:00 - 12:00</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-foreground">Domingo</span>
-                  <span className="text-destructive">Cerrado</span>
-                </div>
+                <div className="flex justify-between"><span className="text-foreground">Lunes a Viernes</span><span className="text-muted-foreground">8:00 - 18:00</span></div>
+                <div className="flex justify-between"><span className="text-foreground">Sábado</span><span className="text-muted-foreground">8:00 - 12:00</span></div>
+                <div className="flex justify-between"><span className="text-foreground">Domingo</span><span className="text-destructive">Cerrado</span></div>
               </div>
             </div>
 
-            {/* Google Maps */}
             <div className="rounded-lg overflow-hidden shadow-md">
               <iframe
                 title="Ubicación de Litigios de Guatemala"
@@ -153,7 +109,7 @@ const Contacto = () => {
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
-          </div>
+          </AnimatedSection>
         </div>
       </section>
     </Layout>
