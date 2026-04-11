@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
-import logoScales from "@/assets/logo-scales.png";
+import logoLitigios from "@/assets/logo-litigios.png";
 
 const navItems = [
   { label: "Inicio", path: "/" },
   { label: "Quiénes Somos", path: "/quienes-somos" },
   { label: "Servicios", path: "/servicios" },
   { label: "Documentos", path: "/documentos" },
+  { label: "FAQ", path: "/faq" },
   { label: "Contacto", path: "/contacto" },
 ];
 
@@ -18,8 +19,8 @@ const Navbar = () => {
   return (
     <nav className="bg-primary sticky top-0 z-50 shadow-lg">
       <div className="container mx-auto flex items-center justify-between py-3">
-        <Link to="/" className="flex items-center gap-2">
-          <img src={logoScales} alt="Litigios de Guatemala" className="h-10 w-10" />
+        <Link to="/" className="flex items-center gap-3">
+          <img src={logoLitigios} alt="Litigios de Guatemala" className="h-12 w-12 object-contain" />
           <span className="text-xl font-heading">
             <span className="text-gold">Litigios</span>{" "}
             <span className="text-primary-foreground">de </span>
