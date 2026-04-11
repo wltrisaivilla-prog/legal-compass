@@ -1,170 +1,208 @@
 import Layout from "@/components/Layout";
-import { FileText, Star, Download, Clock } from "lucide-react";
+import AnimatedSection from "@/components/AnimatedSection";
+import { FileText, Star, Download, CheckCircle, Loader2, X } from "lucide-react";
 import { useState } from "react";
+import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
+import { motion, AnimatePresence } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
+
+const PAYPAL_CLIENT_ID = "ATKbLJU-g9AmQFqpEyqvhnGg619mNRRcZxaVDKgqONdFag5rFES5QYqnWXJ_O1CniB1yclRuzMGfUBRS";
 
 const documents = [
-  {
-    id: "arrendamiento",
-    category: "CONTRATOS",
-    title: "Contrato de Arrendamiento Residencial",
-    description: "Documento completo para arrendamiento de propiedades residenciales en Guatemala. Incluye cláusulas estándar y personalizables.",
-    format: "PDF",
-    pages: 8,
-    price: 150,
-    popular: true,
-  },
-  {
-    id: "compraventa",
-    category: "CONTRATOS",
-    title: "Contrato de Compraventa de Inmueble",
-    description: "Modelo profesional para compraventa de bienes inmuebles con todas las garantías legales.",
-    format: "PDF + Word",
-    pages: 12,
-    price: 225,
-    popular: true,
-  },
-  {
-    id: "poder-general",
-    category: "NOTARIAL",
-    title: "Poder General Notarial",
-    description: "Documento para otorgar poderes generales a un apoderado con validez legal ante notario.",
-    format: "PDF",
-    pages: 5,
-    price: 120,
-    popular: false,
-  },
-  {
-    id: "testamento",
-    category: "SUCESIONES",
-    title: "Testamento Abierto",
-    description: "Formato de testamento abierto para la disposición de bienes conforme a la legislación guatemalteca.",
-    format: "PDF",
-    pages: 6,
-    price: 175,
-    popular: false,
-  },
-  {
-    id: "constitucion-sociedad",
-    category: "CORPORATIVO",
-    title: "Constitución de Sociedad Anónima",
-    description: "Escritura para la constitución de sociedades anónimas con todos los requisitos legales.",
-    format: "PDF + Word",
-    pages: 15,
-    price: 350,
-    popular: false,
-  },
-  {
-    id: "contrato-laboral",
-    category: "LABORAL",
-    title: "Contrato de Trabajo",
-    description: "Modelo de contrato individual de trabajo conforme al Código de Trabajo de Guatemala.",
-    format: "PDF",
-    pages: 6,
-    price: 100,
-    popular: false,
-  },
+  { id: "arrendamiento", category: "CONTRATOS", title: "Contrato de Arrendamiento Residencial", description: "Documento completo para arrendamiento de propiedades residenciales en Guatemala.", format: "PDF", pages: 8, price: 1.00, popular: true },
+  { id: "compraventa", category: "CONTRATOS", title: "Contrato de Compraventa de Inmueble", description: "Modelo profesional para compraventa de bienes inmuebles con garantías legales.", format: "PDF + Word", pages: 12, price: 1.00, popular: true },
+  { id: "poder-general", category: "NOTARIAL", title: "Poder General Notarial", description: "Documento para otorgar poderes generales a un apoderado con validez legal.", format: "PDF", pages: 5, price: 1.00, popular: false },
+  { id: "testamento", category: "SUCESIONES", title: "Testamento Abierto", description: "Formato de testamento abierto conforme a la legislación guatemalteca.", format: "PDF", pages: 6, price: 1.00, popular: false },
+  { id: "constitucion-sociedad", category: "CORPORATIVO", title: "Constitución de Sociedad Anónima", description: "Escritura para constitución de sociedades anónimas con requisitos legales.", format: "PDF + Word", pages: 15, price: 1.00, popular: false },
+  { id: "contrato-laboral", category: "LABORAL", title: "Contrato de Trabajo", description: "Modelo de contrato individual conforme al Código de Trabajo de Guatemala.", format: "PDF", pages: 6, price: 1.00, popular: false },
 ];
 
+type DocType = typeof documents[0];
+
 const Documentos = () => {
-  const [selectedDoc, setSelectedDoc] = useState<typeof documents[0] | null>(null);
+  const [selectedDoc, setSelectedDoc] = useState<DocType | null>(null);
+  const [downloadState, setDownloadState] = useState<"idle" | "processing" | "success">("idle");
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+
+  const handleApprove = async (orderId: string, doc: DocType) => {
+    setDownloadState("processing");
+    try {
+      const { data, error } = await supabase.functions.invoke("verify-payment", {
+        body: { orderId, documentId: doc.id },
+      });
+      if (error) throw error;
+      if (data?.downloadUrl) {
+        setDownloadUrl(data.downloadUrl);
+        setDownloadState("success");
+      } else {
+        throw new Error("No download URL");
+      }
+    } catch (err) {
+      console.error("Payment verification error:", err);
+      setDownloadState("idle");
+    }
+  };
+
+  const closeModal = () => {
+    setSelectedDoc(null);
+    setDownloadState("idle");
+    setDownloadUrl(null);
+  };
 
   return (
-    <Layout>
-      <section className="bg-primary py-16 text-center">
-        <h1 className="font-heading text-4xl text-primary-foreground italic font-bold">
-          Documentos Legales
-        </h1>
-        <div className="gold-underline mt-2" />
-        <p className="text-primary-foreground/80 mt-4">
-          Plantillas profesionales listas para usar con vista previa incluida
-        </p>
-      </section>
+    <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "USD", intent: "capture" }}>
+      <Layout>
+        <section className="bg-primary py-16 text-center">
+          <h1 className="font-heading text-4xl text-primary-foreground italic font-bold">Documentos Legales</h1>
+          <div className="gold-underline mt-2" />
+          <p className="text-primary-foreground/80 mt-4">Plantillas profesionales listas para usar</p>
+        </section>
 
-      <section className="section-padding bg-background">
-        <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {documents.map((doc) => (
-            <div key={doc.id} className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-              {/* Card header */}
-              <div className="bg-secondary p-6 flex flex-col items-center relative">
-                {doc.popular && (
-                  <span className="absolute top-3 right-3 bg-destructive text-destructive-foreground text-xs px-2 py-1 rounded-full flex items-center gap-1">
-                    <Star size={12} /> Popular
-                  </span>
-                )}
-                <FileText className="text-destructive mb-2" size={48} />
-                <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">
-                  {doc.pages} páginas
-                </span>
-              </div>
-
-              {/* Card body */}
-              <div className="p-5">
-                <span className="text-xs text-gold font-semibold tracking-wider">{doc.category}</span>
-                <h3 className="font-heading text-lg font-bold text-foreground mt-1 mb-2">{doc.title}</h3>
-                <p className="text-muted-foreground text-sm mb-3">{doc.description}</p>
-                <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
-                  <span className="flex items-center gap-1"><FileText size={12} /> {doc.format}</span>
-                  <span className="flex items-center gap-1"><Download size={12} /> Descarga inmediata</span>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="text-2xl font-bold text-gold">Q{doc.price.toFixed(2)}</span>
-                    <span className="text-xs text-muted-foreground block">IVA incluido</span>
+        <section className="section-padding bg-background">
+          <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {documents.map((doc, i) => (
+              <AnimatedSection key={doc.id} delay={i * 0.1}>
+                <motion.div
+                  whileHover={{ scale: 1.03, y: -4 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className="bg-card border border-border rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-shadow h-full flex flex-col"
+                >
+                  <div className="bg-secondary p-6 flex flex-col items-center relative">
+                    {doc.popular && (
+                      <span className="absolute top-3 right-3 bg-destructive text-destructive-foreground text-xs px-2 py-1 rounded-full flex items-center gap-1">
+                        <Star size={12} /> Popular
+                      </span>
+                    )}
+                    <FileText className="text-gold mb-2" size={48} />
+                    <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">{doc.pages} páginas</span>
                   </div>
-                  <div className="flex gap-2">
-                    <button
-                      onClick={() => setSelectedDoc(doc)}
-                      className="text-sm border border-border rounded px-3 py-2 hover:border-gold transition-colors text-foreground"
-                    >
-                      Vista Previa
-                    </button>
-                    <button className="btn-gold text-sm !px-3 !py-2">
-                      Comprar
-                    </button>
+                  <div className="p-5 flex flex-col flex-1">
+                    <span className="text-xs text-gold font-semibold tracking-wider">{doc.category}</span>
+                    <h3 className="font-heading text-lg font-bold text-foreground mt-1 mb-2">{doc.title}</h3>
+                    <p className="text-muted-foreground text-sm mb-3 flex-1">{doc.description}</p>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
+                      <span className="flex items-center gap-1"><FileText size={12} /> {doc.format}</span>
+                      <span className="flex items-center gap-1"><Download size={12} /> Descarga inmediata</span>
+                    </div>
+                    <div className="flex items-center justify-between mt-auto">
+                      <div>
+                        <span className="text-2xl font-bold text-gold">${doc.price.toFixed(2)} USD</span>
+                      </div>
+                      <button
+                        onClick={() => { setSelectedDoc(doc); setDownloadState("idle"); setDownloadUrl(null); }}
+                        className="btn-gold text-sm !px-4 !py-2"
+                      >
+                        Comprar
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* Preview Modal */}
-      {selectedDoc && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 p-4">
-          <div className="bg-card rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto p-6">
-            <div className="flex justify-between items-start mb-4">
-              <h2 className="font-heading text-xl font-bold text-foreground">{selectedDoc.title}</h2>
-              <button onClick={() => setSelectedDoc(null)} className="text-muted-foreground hover:text-foreground text-xl">×</button>
-            </div>
-
-            <div className="bg-gold/10 border border-gold/30 rounded p-3 mb-4 text-sm text-foreground">
-              ⚠ <strong>Vista previa limitada:</strong> Esta es una versión de muestra con las primeras páginas.
-            </div>
-
-            <p className="text-muted-foreground text-sm mb-4">{selectedDoc.description}</p>
-
-            <div className="bg-secondary rounded-lg p-8 text-center mb-4">
-              <FileText className="text-destructive mx-auto mb-2" size={48} />
-              <p className="font-semibold text-foreground">Vista Previa del Documento</p>
-              <p className="text-sm text-muted-foreground">Las primeras 2 páginas se muestran como vista previa</p>
-              <div className="mt-4 text-xs text-muted-foreground italic">
-                <p>Página 1 – Encabezado y Cláusulas Iniciales</p>
-                <p className="mt-2 opacity-50">Contenido completo disponible después de la compra</p>
-              </div>
-            </div>
-
-            <button className="btn-gold w-full text-center">
-              Comprar Documento Completo – Q{selectedDoc.price.toFixed(2)}
-            </button>
-            <p className="text-center text-xs text-muted-foreground mt-2">
-              Incluye: Documento completo + Actualizaciones + Soporte
-            </p>
+                </motion.div>
+              </AnimatedSection>
+            ))}
           </div>
-        </div>
-      )}
-    </Layout>
+        </section>
+
+        {/* Purchase Modal */}
+        <AnimatePresence>
+          {selectedDoc && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 p-4"
+              onClick={(e) => e.target === e.currentTarget && downloadState !== "processing" && closeModal()}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-card rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto p-6"
+              >
+                <div className="flex justify-between items-start mb-4">
+                  <h2 className="font-heading text-xl font-bold text-foreground">{selectedDoc.title}</h2>
+                  <button onClick={closeModal} className="text-muted-foreground hover:text-foreground text-xl" disabled={downloadState === "processing"}>
+                    <X size={20} />
+                  </button>
+                </div>
+
+                {downloadState === "success" && downloadUrl ? (
+                  <div className="text-center py-8">
+                    <CheckCircle className="text-green-500 mx-auto mb-4" size={64} />
+                    <h3 className="font-heading text-2xl font-bold text-foreground mb-2">¡Compra Exitosa!</h3>
+                    <p className="text-muted-foreground mb-6">Su documento está listo para descargar. El enlace expira en 5 minutos.</p>
+                    <a
+                      href={downloadUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="btn-gold inline-flex items-center gap-2"
+                    >
+                      <Download size={18} /> Descargar Documento
+                    </a>
+                  </div>
+                ) : downloadState === "processing" ? (
+                  <div className="text-center py-12">
+                    <Loader2 className="animate-spin text-gold mx-auto mb-4" size={48} />
+                    <p className="text-foreground font-semibold">Verificando pago...</p>
+                    <p className="text-muted-foreground text-sm">Por favor espere</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="bg-gold/10 border border-gold/30 rounded p-3 mb-4 text-sm text-foreground">
+                      ⚠ <strong>Vista previa limitada:</strong> Versión de muestra con las primeras páginas.
+                    </div>
+
+                    <p className="text-muted-foreground text-sm mb-4">{selectedDoc.description}</p>
+
+                    <div className="bg-secondary rounded-lg p-8 text-center mb-4">
+                      <FileText className="text-gold mx-auto mb-2" size={48} />
+                      <p className="font-semibold text-foreground">Vista Previa del Documento</p>
+                      <p className="text-sm text-muted-foreground">Las primeras 2 páginas se muestran como vista previa</p>
+                      <div className="mt-4 text-xs text-muted-foreground italic">
+                        <p>Página 1 – Encabezado y Cláusulas Iniciales</p>
+                        <p className="mt-2 opacity-50">Contenido completo disponible después de la compra</p>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-border pt-4">
+                      <p className="text-center font-heading font-bold text-lg text-foreground mb-1">
+                        Total: ${selectedDoc.price.toFixed(2)} USD
+                      </p>
+                      <p className="text-center text-xs text-muted-foreground mb-4">
+                        Pague con tarjeta de crédito/débito o PayPal
+                      </p>
+                      <PayPalButtons
+                        style={{ layout: "vertical", shape: "rect", label: "pay" }}
+                        fundingSource={undefined}
+                        createOrder={(_data, actions) =>
+                          actions.order.create({
+                            intent: "CAPTURE",
+                            purchase_units: [{
+                              amount: { currency_code: "USD", value: selectedDoc.price.toFixed(2) },
+                              description: selectedDoc.title,
+                            }],
+                          })
+                        }
+                        onApprove={async (_data, actions) => {
+                          const details = await actions.order!.capture();
+                          await handleApprove(details.id!, selectedDoc);
+                        }}
+                        onError={(err) => {
+                          console.error("PayPal error:", err);
+                        }}
+                      />
+                    </div>
+
+                    <p className="text-center text-xs text-muted-foreground mt-3">
+                      Incluye: Documento completo + Actualizaciones + Soporte
+                    </p>
+                  </>
+                )}
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Layout>
+    </PayPalScriptProvider>
   );
 };
 
