@@ -164,15 +164,28 @@ const Documentos = () => {
 
                     <p className="text-muted-foreground text-sm mb-4">{selectedDoc.description}</p>
 
-                    <div className="bg-secondary rounded-lg p-8 text-center mb-4">
-                      <FileText className="text-gold mx-auto mb-2" size={48} />
-                      <p className="font-semibold text-foreground">Vista Previa del Documento</p>
-                      <p className="text-sm text-muted-foreground">Las primeras 2 páginas se muestran como vista previa</p>
-                      <div className="mt-4 text-xs text-muted-foreground italic">
-                        <p>Página 1 – Encabezado y Cláusulas Iniciales</p>
-                        <p className="mt-2 opacity-50">Contenido completo disponible después de la compra</p>
+                    {selectedDoc.previewPdf ? (
+                      <div className="bg-secondary rounded-lg overflow-hidden mb-4">
+                        <iframe
+                          src={selectedDoc.previewPdf}
+                          className="w-full h-64 border-0"
+                          title={`Vista previa: ${selectedDoc.title}`}
+                        />
+                        <p className="text-xs text-muted-foreground text-center py-2 italic">
+                          Vista previa — Documento completo disponible después de la compra
+                        </p>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="bg-secondary rounded-lg p-8 text-center mb-4">
+                        <FileText className="text-gold mx-auto mb-2" size={48} />
+                        <p className="font-semibold text-foreground">Vista Previa del Documento</p>
+                        <p className="text-sm text-muted-foreground">Las primeras 2 páginas se muestran como vista previa</p>
+                        <div className="mt-4 text-xs text-muted-foreground italic">
+                          <p>Página 1 – Encabezado y Cláusulas Iniciales</p>
+                          <p className="mt-2 opacity-50">Contenido completo disponible después de la compra</p>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="border-t border-border pt-4">
                       <p className="text-center font-heading font-bold text-lg text-foreground mb-1">
