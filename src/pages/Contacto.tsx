@@ -1,22 +1,39 @@
 import Layout from "@/components/Layout";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useState } from "react";
-import { Phone, Mail, MapPin, Clock, MessageCircle, Send } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, MessageCircle, Send, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contacto = () => {
   const { toast } = useToast();
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const whatsappUrl = `https://wa.me/50258997508?text=${encodeURIComponent("Hola, me gustaría obtener información sobre sus servicios legales.")}`;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name.trim() || !form.email.trim() || !form.message.trim()) {
       toast({ title: "Error", description: "Por favor complete todos los campos requeridos.", variant: "destructive" });
       return;
     }
-    toast({ title: "Mensaje enviado", description: "Nos pondremos en contacto pronto." });
-    setForm({ name: "", email: "", subject: "", message: "" });
+
+    setIsSubmitting(true);
+    try {
+      const { error } = await supabase.functions.invoke("notify-contact", {
+        body: { name: form.name, email: form.email, subject: form.subject, message: form.message },
+      });
+
+      if (error) throw error;
+
+      toast({ title: "Mensaje enviado", description: "Su mensaje ha sido recibido. Nos pondremos en contacto pronto." });
+      setForm({ name: "", email: "", subject: "", message: "" });
+    } catch (err) {
+      console.error("Contact form error:", err);
+      toast({ title: "Error", description: "No se pudo enviar el mensaje. Intente de nuevo o contáctenos por WhatsApp.", variant: "destructive" });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -34,22 +51,23 @@ const Contacto = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Nombre *</label>
-                <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none" maxLength={100} />
+                <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none" maxLength={100} disabled={isSubmitting} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Email *</label>
-                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none" maxLength={255} />
+                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none" maxLength={255} disabled={isSubmitting} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Asunto</label>
-                <input type="text" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none" maxLength={200} />
+                <input type="text" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none" maxLength={200} disabled={isSubmitting} />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Mensaje *</label>
-                <textarea rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none resize-none" maxLength={1000} />
+                <textarea rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none resize-none" maxLength={1000} disabled={isSubmitting} />
               </div>
-              <button type="submit" className="btn-gold flex items-center gap-2">
-                <Send size={16} /> Enviar Mensaje
+              <button type="submit" className="btn-gold flex items-center gap-2" disabled={isSubmitting}>
+                {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
+                {isSubmitting ? "Enviando..." : "Enviar Mensaje"}
               </button>
             </form>
 
