@@ -50,7 +50,7 @@ const Documentos = () => {
   };
 
   return (
-    <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "USD", intent: "capture", locale: "es_GT", buyerCountry: "GT" }}>
+    <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "USD", intent: "capture" }}>
       <Layout>
         <section className="bg-primary py-16 text-center">
           <h1 className="font-heading text-4xl text-primary-foreground italic font-bold">Documentos Legales</h1>
