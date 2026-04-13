@@ -9,12 +9,13 @@ import { supabase } from "@/integrations/supabase/client";
 const PAYPAL_CLIENT_ID = "AQg_iVEa1KBZA0e5hJl00RZFUUcxSJ1hg9F8bI3qPD-LacS5YBeDxRDeG8APHT9CzqZsJqWcE59i2cdH";
 
 const documents = [
-  { id: "arrendamiento", category: "CONTRATOS", title: "Contrato de Arrendamiento Residencial", description: "Documento completo para arrendamiento de propiedades residenciales en Guatemala.", format: "PDF", pages: 8, price: 1.00, popular: true },
-  { id: "compraventa", category: "CONTRATOS", title: "Contrato de Compraventa de Inmueble", description: "Modelo profesional para compraventa de bienes inmuebles con garantías legales.", format: "PDF + Word", pages: 12, price: 1.00, popular: true },
-  { id: "poder-general", category: "NOTARIAL", title: "Poder General Notarial", description: "Documento para otorgar poderes generales a un apoderado con validez legal.", format: "PDF", pages: 5, price: 1.00, popular: false },
-  { id: "testamento", category: "SUCESIONES", title: "Testamento Abierto", description: "Formato de testamento abierto conforme a la legislación guatemalteca.", format: "PDF", pages: 6, price: 1.00, popular: false },
-  { id: "constitucion-sociedad", category: "CORPORATIVO", title: "Constitución de Sociedad Anónima", description: "Escritura para constitución de sociedades anónimas con requisitos legales.", format: "PDF + Word", pages: 15, price: 1.00, popular: false },
-  { id: "contrato-laboral", category: "LABORAL", title: "Contrato de Trabajo", description: "Modelo de contrato individual conforme al Código de Trabajo de Guatemala.", format: "PDF", pages: 6, price: 1.00, popular: false },
+  { id: "arrendamiento", category: "CONTRATOS", title: "Contrato de Arrendamiento Residencial", description: "Documento completo para arrendamiento de propiedades residenciales en Guatemala.", format: "PDF", pages: 8, price: 1.00, popular: true, previewPdf: null, downloadFile: null },
+  { id: "compraventa", category: "CONTRATOS", title: "Contrato de Compraventa de Inmueble", description: "Modelo profesional para compraventa de bienes inmuebles con garantías legales.", format: "PDF + Word", pages: 12, price: 1.00, popular: true, previewPdf: "/COMPRAVENTA DE INMUEBLE.pdf", downloadFile: "/COMPRAVENTA DE INMUEBLE.docx" },
+  { id: "desmembracion", category: "BIENES RAÍCES", title: "Desmembración a Terceros", description: "Documento legal para desmembración de bienes inmuebles a favor de terceros en Guatemala.", format: "PDF + Word", pages: 10, price: 1.00, popular: false, previewPdf: "/DESMEMBRACION   A TERCEROS.pdf", downloadFile: "/DESMEMBRACION   A TERCEROS.doc" },
+  { id: "poder-general", category: "NOTARIAL", title: "Poder General Notarial", description: "Documento para otorgar poderes generales a un apoderado con validez legal.", format: "PDF", pages: 5, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
+  { id: "testamento", category: "SUCESIONES", title: "Testamento Abierto", description: "Formato de testamento abierto conforme a la legislación guatemalteca.", format: "PDF", pages: 6, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
+  { id: "constitucion-sociedad", category: "CORPORATIVO", title: "Constitución de Sociedad Anónima", description: "Escritura para constitución de sociedades anónimas con requisitos legales.", format: "PDF + Word", pages: 15, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
+  { id: "contrato-laboral", category: "LABORAL", title: "Contrato de Trabajo", description: "Modelo de contrato individual conforme al Código de Trabajo de Guatemala.", format: "PDF", pages: 6, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
 ];
 
 type DocType = typeof documents[0];
