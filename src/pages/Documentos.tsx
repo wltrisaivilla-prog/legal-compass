@@ -9,12 +9,13 @@ import { supabase } from "@/integrations/supabase/client";
 const PAYPAL_CLIENT_ID = "AQg_iVEa1KBZA0e5hJl00RZFUUcxSJ1hg9F8bI3qPD-LacS5YBeDxRDeG8APHT9CzqZsJqWcE59i2cdH";
 
 const documents = [
-  { id: "arrendamiento", category: "CONTRATOS", title: "Contrato de Arrendamiento Residencial", description: "Documento completo para arrendamiento de propiedades residenciales en Guatemala.", format: "PDF", pages: 8, price: 1.00, popular: true },
-  { id: "compraventa", category: "CONTRATOS", title: "Contrato de Compraventa de Inmueble", description: "Modelo profesional para compraventa de bienes inmuebles con garantías legales.", format: "PDF + Word", pages: 12, price: 1.00, popular: true },
-  { id: "poder-general", category: "NOTARIAL", title: "Poder General Notarial", description: "Documento para otorgar poderes generales a un apoderado con validez legal.", format: "PDF", pages: 5, price: 1.00, popular: false },
-  { id: "testamento", category: "SUCESIONES", title: "Testamento Abierto", description: "Formato de testamento abierto conforme a la legislación guatemalteca.", format: "PDF", pages: 6, price: 1.00, popular: false },
-  { id: "constitucion-sociedad", category: "CORPORATIVO", title: "Constitución de Sociedad Anónima", description: "Escritura para constitución de sociedades anónimas con requisitos legales.", format: "PDF + Word", pages: 15, price: 1.00, popular: false },
-  { id: "contrato-laboral", category: "LABORAL", title: "Contrato de Trabajo", description: "Modelo de contrato individual conforme al Código de Trabajo de Guatemala.", format: "PDF", pages: 6, price: 1.00, popular: false },
+  { id: "arrendamiento", category: "CONTRATOS", title: "Contrato de Arrendamiento Residencial", description: "Documento completo para arrendamiento de propiedades residenciales en Guatemala.", format: "PDF", pages: 8, price: 1.00, popular: true, previewPdf: null, downloadFile: null },
+  { id: "compraventa", category: "CONTRATOS", title: "Contrato de Compraventa de Inmueble", description: "Modelo profesional para compraventa de bienes inmuebles con garantías legales.", format: "PDF + Word", pages: 12, price: 1.00, popular: true, previewPdf: "/COMPRAVENTA DE INMUEBLE.pdf", downloadFile: "/COMPRAVENTA DE INMUEBLE.docx" },
+  { id: "desmembracion", category: "BIENES RAÍCES", title: "Desmembración a Terceros", description: "Documento legal para desmembración de bienes inmuebles a favor de terceros en Guatemala.", format: "PDF + Word", pages: 10, price: 1.00, popular: false, previewPdf: "/DESMEMBRACION   A TERCEROS.pdf", downloadFile: "/DESMEMBRACION   A TERCEROS.doc" },
+  { id: "poder-general", category: "NOTARIAL", title: "Poder General Notarial", description: "Documento para otorgar poderes generales a un apoderado con validez legal.", format: "PDF", pages: 5, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
+  { id: "testamento", category: "SUCESIONES", title: "Testamento Abierto", description: "Formato de testamento abierto conforme a la legislación guatemalteca.", format: "PDF", pages: 6, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
+  { id: "constitucion-sociedad", category: "CORPORATIVO", title: "Constitución de Sociedad Anónima", description: "Escritura para constitución de sociedades anónimas con requisitos legales.", format: "PDF + Word", pages: 15, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
+  { id: "contrato-laboral", category: "LABORAL", title: "Contrato de Trabajo", description: "Modelo de contrato individual conforme al Código de Trabajo de Guatemala.", format: "PDF", pages: 6, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
 ];
 
 type DocType = typeof documents[0];
@@ -27,15 +28,26 @@ const Documentos = () => {
   const handleApprove = async (orderId: string, doc: DocType) => {
     setDownloadState("processing");
     try {
-      const { data, error } = await supabase.functions.invoke("verify-payment", {
+      // Record purchase in backend
+      const { error } = await supabase.functions.invoke("verify-payment", {
         body: { orderId, documentId: doc.id },
       });
-      if (error) throw error;
-      if (data?.downloadUrl) {
-        setDownloadUrl(data.downloadUrl);
+      if (error) console.error("Payment record error:", error);
+
+      // Use local file if available, otherwise use backend signed URL
+      if (doc.downloadFile) {
+        setDownloadUrl(doc.downloadFile);
         setDownloadState("success");
       } else {
-        throw new Error("No download URL");
+        const { data } = await supabase.functions.invoke("verify-payment", {
+          body: { orderId, documentId: doc.id },
+        });
+        if (data?.downloadUrl) {
+          setDownloadUrl(data.downloadUrl);
+          setDownloadState("success");
+        } else {
+          throw new Error("No download URL");
+        }
       }
     } catch (err) {
       console.error("Payment verification error:", err);
@@ -128,12 +140,11 @@ const Documentos = () => {
                 {downloadState === "success" && downloadUrl ? (
                   <div className="text-center py-8">
                     <CheckCircle className="text-green-500 mx-auto mb-4" size={64} />
-                    <h3 className="font-heading text-2xl font-bold text-foreground mb-2">¡Compra Exitosa!</h3>
-                    <p className="text-muted-foreground mb-6">Su documento está listo para descargar. El enlace expira en 5 minutos.</p>
+                    <h3 className="font-heading text-2xl font-bold text-foreground mb-2">¡Pago Exitoso!</h3>
+                    <p className="text-muted-foreground mb-6">Ya puede descargar su documento editable.</p>
                     <a
                       href={downloadUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      download
                       className="btn-gold inline-flex items-center gap-2"
                     >
                       <Download size={18} /> Descargar Documento
@@ -153,15 +164,28 @@ const Documentos = () => {
 
                     <p className="text-muted-foreground text-sm mb-4">{selectedDoc.description}</p>
 
-                    <div className="bg-secondary rounded-lg p-8 text-center mb-4">
-                      <FileText className="text-gold mx-auto mb-2" size={48} />
-                      <p className="font-semibold text-foreground">Vista Previa del Documento</p>
-                      <p className="text-sm text-muted-foreground">Las primeras 2 páginas se muestran como vista previa</p>
-                      <div className="mt-4 text-xs text-muted-foreground italic">
-                        <p>Página 1 – Encabezado y Cláusulas Iniciales</p>
-                        <p className="mt-2 opacity-50">Contenido completo disponible después de la compra</p>
+                    {selectedDoc.previewPdf ? (
+                      <div className="bg-secondary rounded-lg overflow-hidden mb-4">
+                        <iframe
+                          src={selectedDoc.previewPdf}
+                          className="w-full h-64 border-0"
+                          title={`Vista previa: ${selectedDoc.title}`}
+                        />
+                        <p className="text-xs text-muted-foreground text-center py-2 italic">
+                          Vista previa — Documento completo disponible después de la compra
+                        </p>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="bg-secondary rounded-lg p-8 text-center mb-4">
+                        <FileText className="text-gold mx-auto mb-2" size={48} />
+                        <p className="font-semibold text-foreground">Vista Previa del Documento</p>
+                        <p className="text-sm text-muted-foreground">Las primeras 2 páginas se muestran como vista previa</p>
+                        <div className="mt-4 text-xs text-muted-foreground italic">
+                          <p>Página 1 – Encabezado y Cláusulas Iniciales</p>
+                          <p className="mt-2 opacity-50">Contenido completo disponible después de la compra</p>
+                        </div>
+                      </div>
+                    )}
 
                     <div className="border-t border-border pt-4">
                       <p className="text-center font-heading font-bold text-lg text-foreground mb-1">
