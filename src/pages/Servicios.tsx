@@ -1,79 +1,228 @@
 import Layout from "@/components/Layout";
 import AnimatedSection from "@/components/AnimatedSection";
 import {
-  Handshake, Building2, FileText, Scale, Users, Shield,
-  Briefcase, Home, Gavel, FileCheck, BookOpen, Globe,
-  ChevronRight,
+  Building2, FileText, Home, Shield, Gavel, Users,
+  Briefcase, Car, ChevronDown, MessageCircle,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
-const servicios = [
-  { icon: Handshake, title: "Resolución de Conflictos", desc: "Mediación, arbitraje y litigio estratégico.", details: ["Mediación y conciliación", "Arbitraje comercial", "Litigio estratégico", "Negociación de acuerdos"] },
-  { icon: Building2, title: "Derecho Corporativo", desc: "Constitución de sociedades, fusiones y adquisiciones.", details: ["Constitución de sociedades", "Fusiones y adquisiciones", "Asesoría fiscal corporativa", "Gobierno corporativo"] },
-  { icon: FileText, title: "Contratos", desc: "Redacción, revisión y negociación de contratos.", details: ["Contratos comerciales", "Contratos de arrendamiento", "Contratos laborales", "Contratos internacionales"] },
-  { icon: Scale, title: "Litigio Civil", desc: "Representación en procesos civiles y mercantiles.", details: ["Demandas civiles", "Cobros judiciales", "Procesos mercantiles", "Recursos de apelación"] },
-  { icon: Users, title: "Derecho Laboral", desc: "Asesoría en relaciones laborales y despidos.", details: ["Despidos y liquidaciones", "Contratos de trabajo", "Prestaciones laborales", "Conflictos colectivos"] },
-  { icon: Shield, title: "Derecho Penal", desc: "Defensa penal y querella criminal.", details: ["Defensa penal", "Querella criminal", "Medidas cautelares", "Recursos de amparo"] },
-  { icon: Briefcase, title: "Propiedad Intelectual", desc: "Registro de marcas, patentes y derechos de autor.", details: ["Registro de marcas", "Patentes de invención", "Derechos de autor", "Protección de diseños"] },
-  { icon: Home, title: "Derecho Inmobiliario", desc: "Compraventa, arrendamiento y regularización.", details: ["Compraventa de inmuebles", "Regularización de tierras", "Servidumbres y usufructos", "Desalojos"] },
-  { icon: Gavel, title: "Derecho Notarial", desc: "Escrituras públicas, poderes y actas notariales.", details: ["Escrituras públicas", "Poderes notariales", "Actas de protocolización", "Testamentos notariales"] },
-  { icon: FileCheck, title: "Derecho Administrativo", desc: "Trámites y recursos ante entidades gubernamentales.", details: ["Recursos administrativos", "Licitaciones públicas", "Permisos y licencias", "Impugnaciones"] },
-  { icon: BookOpen, title: "Sucesiones", desc: "Testamentos, herencias y particiones.", details: ["Testamentos abiertos", "Declaratoria de herederos", "Partición de bienes", "Sucesiones intestadas"] },
-  { icon: Globe, title: "Derecho Migratorio", desc: "Trámites migratorios y permisos de residencia.", details: ["Residencia temporal/permanente", "Permisos de trabajo", "Nacionalidad guatemalteca", "Recursos migratorios"] },
+const WHATSAPP_NUMBER = "50258997508";
+
+const categorias = [
+  {
+    icon: Building2,
+    title: "Materia Mercantil",
+    servicios: [
+      "Constitución de sociedades",
+      "Modificaciones y ampliaciones",
+      "Empresas mercantiles",
+      "Celebración de Asambleas Ordinarias",
+      "Celebración de Asambleas Extraordinarias",
+      "Punto resolutivo (Punto de actas)",
+      "Títulos de acciones",
+      "Actas Notariales de nombramiento (Auxiliares de comercio)",
+      "Certificaciones",
+      "Cambio de dirección",
+    ],
+  },
+  {
+    icon: Gavel,
+    title: "Actos Notariales",
+    servicios: [
+      "Actas notariales de requerimiento",
+      "Actas notariales de legalización de firmas",
+      "Actas notariales de legalización de documentos",
+      "Liquidación total o parcial de patrimonio conyugal",
+      "Celebraciones de matrimonios nacionales",
+      "Celebraciones de matrimonios (Extranjeros) Mixtos",
+      "Rescisiones",
+      "Ampliaciones",
+      "Carta poder",
+      "Finiquitos",
+      "Mandatos generales, especiales, judiciales",
+      "Contratos de arrendamiento",
+    ],
+  },
+  {
+    icon: Home,
+    title: "Bienes Raíces",
+    servicios: [
+      "Contratos de compraventa",
+      "Contratos de compraventa de propiedad de inmuebles",
+      "Contratos de partición",
+      "División de la cosa común",
+      "Unificación de propiedades",
+      "Constitución de Usufructo",
+      "Carta Total de Pago",
+      "Concesión de Minas",
+      "Declaración Jurada de cambio de ubicación inmuebles",
+      "Declaración jurada de derechos posesorios",
+      "Cesión de derechos posesorios",
+      "Mutuo con garantía hipotecaria",
+      "Cancelación de hipotecas por prescripción",
+      "Inmovilización de propiedades",
+      "Permutas",
+      "Contrato de comodato",
+    ],
+  },
+  {
+    icon: Shield,
+    title: "Materia Penal",
+    servicios: [
+      "Asistencia en hechos de tránsito",
+      "Conciliaciones ante el Ministerio Público",
+      "Procesos Penales",
+      "Violencia contra la mujer",
+      "Negación de asistencia económica",
+    ],
+  },
+  {
+    icon: FileText,
+    title: "Documentos Provenientes del Extranjero",
+    servicios: [
+      "Apostillas",
+      "Mandatos generales, especiales, judiciales ETC",
+      "Nacionalización de hijos de guatemaltecos nacidos en el extranjero",
+      "Protocolización de documentos",
+      "Traducciones juradas inglés español y viceversa",
+    ],
+  },
+  {
+    icon: Gavel,
+    title: "Jurisdicción Voluntaria",
+    servicios: [
+      "Rectificación de partida",
+      "Cambio de nombre",
+      "Proceso sucesorio intestado o testamentario",
+      "Cancelación de partidas",
+      "Inscripción extemporánea",
+      "Avalúos de bienes inmuebles, vehículos, armas de fuego",
+    ],
+  },
+  {
+    icon: Users,
+    title: "Materia Familiar",
+    servicios: [
+      "Pensiones alimenticias",
+      "Obligación de hacer",
+      "Juicios de ejecución",
+    ],
+  },
+  {
+    icon: Briefcase,
+    title: "Materia Laboral",
+    servicios: [
+      "Despidos injustificados",
+      "Reinstalaciones",
+      "Indemnización post mortem",
+      "Procesos contra el Estado",
+    ],
+  },
+  {
+    icon: Car,
+    title: "Vehículos",
+    servicios: [
+      "Traspasos electrónicos",
+      "Traspasos presenciales",
+      "Cambio de uso",
+      "Cambio de placas",
+      "Reposición de placas",
+      "Reposición de tarjeta, título y placas",
+      "Primeras placas de vehículos usados importados",
+      "Inactivaciones",
+      "Activaciones",
+    ],
+  },
 ];
 
+const buildWhatsAppUrl = (servicio: string) =>
+  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
+    `Hola, me interesa obtener información sobre el servicio: "${servicio}". ¿Podrían darme más detalles?`
+  )}`;
+
 const Servicios = () => {
-  const [expanded, setExpanded] = useState<string | null>(null);
+  const [expandedCat, setExpandedCat] = useState<string | null>(null);
 
   return (
     <Layout>
       <section className="bg-primary py-16 text-center">
-        <h1 className="font-heading text-4xl text-primary-foreground italic font-bold">Nuestros Servicios</h1>
+        <h1 className="font-heading text-4xl text-primary-foreground italic font-bold">
+          Catálogo de Servicios
+        </h1>
         <div className="gold-underline mt-2" />
-        <p className="text-primary-foreground/80 mt-4">Más de 80 servicios legales especializados</p>
+        <p className="text-primary-foreground/80 mt-4">
+          Más de 80 servicios legales especializados para toda Guatemala
+        </p>
       </section>
 
       <section className="section-padding bg-background">
-        <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {servicios.map((s, i) => {
-            const isExpanded = expanded === s.title;
+        <div className="container mx-auto max-w-4xl space-y-4">
+          {categorias.map((cat, i) => {
+            const isOpen = expandedCat === cat.title;
             return (
-              <AnimatedSection key={s.title} delay={i * 0.05}>
-                <motion.div
-                  whileHover={{ scale: isExpanded ? 1 : 1.03, y: isExpanded ? 0 : -4 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                  className={`bg-card border rounded-lg p-6 transition-all duration-300 cursor-pointer group ${
-                    isExpanded ? "border-gold shadow-lg shadow-gold/10" : "border-border hover:border-gold hover:shadow-lg"
-                  }`}
-                  onClick={() => setExpanded(isExpanded ? null : s.title)}
-                >
-                  <div className="flex items-start justify-between mb-4">
-                    <s.icon className="text-gold group-hover:scale-110 transition-transform duration-300" size={40} />
-                    <ChevronRight className={`text-muted-foreground transition-transform duration-300 ${isExpanded ? "rotate-90 text-gold" : ""}`} size={20} />
-                  </div>
-                  <h3 className="font-heading text-lg font-bold text-foreground mb-2">{s.title}</h3>
-                  <p className="text-muted-foreground text-sm mb-3">{s.desc}</p>
-                  <div className={`overflow-hidden transition-all duration-300 ${isExpanded ? "max-h-48 opacity-100" : "max-h-0 opacity-0"}`}>
-                    <ul className="space-y-1.5 pt-3 border-t border-border">
-                      {s.details.map((d) => (
-                        <li key={d} className="text-sm text-foreground flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0" />
-                          {d}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </motion.div>
+              <AnimatedSection key={cat.title} delay={i * 0.05}>
+                <div className="border border-border rounded-lg overflow-hidden bg-card">
+                  <button
+                    onClick={() => setExpandedCat(isOpen ? null : cat.title)}
+                    className="w-full flex items-center justify-between p-5 hover:bg-secondary/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <cat.icon className="text-gold flex-shrink-0" size={28} />
+                      <h2 className="font-heading text-lg font-bold text-foreground text-left">
+                        {cat.title}
+                      </h2>
+                      <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                        {cat.servicios.length}
+                      </span>
+                    </div>
+                    <ChevronDown
+                      className={`text-gold transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                      size={22}
+                    />
+                  </button>
+
+                  <AnimatePresence>
+                    {isOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="border-t border-border px-5 pb-5">
+                          <ul className="divide-y divide-border">
+                            {cat.servicios.map((s) => (
+                              <li
+                                key={s}
+                                className="flex items-center justify-between py-3 gap-3"
+                              >
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0" />
+                                  <span className="text-sm text-foreground">{s}</span>
+                                </div>
+                                <a
+                                  href={buildWhatsAppUrl(s)}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex-shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-[#25D366] hover:bg-[#1da851] px-3 py-1.5 rounded-full transition-colors"
+                                >
+                                  <MessageCircle size={14} />
+                                  Consultar
+                                </a>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
               </AnimatedSection>
             );
           })}
         </div>
-
-        <AnimatedSection className="text-center mt-12">
-          <Link to="/contacto" className="btn-gold">Solicitar Consulta</Link>
-        </AnimatedSection>
       </section>
     </Layout>
   );

@@ -6,7 +6,7 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 
-const PAYPAL_CLIENT_ID = "ATKbLJU-g9AmQFqpEyqvhnGg619mNRRcZxaVDKgqONdFag5rFES5QYqnWXJ_O1CniB1yclRuzMGfUBRS";
+const PAYPAL_CLIENT_ID = "AQg_iVEa1KBZA0e5hJl00RZFUUcxSJ1hg9F8bI3qPD-LacS5YBeDxRDeG8APHT9CzqZsJqWcE59i2cdH";
 
 const documents = [
   { id: "arrendamiento", category: "CONTRATOS", title: "Contrato de Arrendamiento Residencial", description: "Documento completo para arrendamiento de propiedades residenciales en Guatemala.", format: "PDF", pages: 8, price: 1.00, popular: true },
@@ -50,7 +50,7 @@ const Documentos = () => {
   };
 
   return (
-    <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "USD", intent: "capture" }}>
+    <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "USD", intent: "capture", locale: "es_GT", buyerCountry: "GT" }}>
       <Layout>
         <section className="bg-primary py-16 text-center">
           <h1 className="font-heading text-4xl text-primary-foreground italic font-bold">Documentos Legales</h1>
