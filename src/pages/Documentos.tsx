@@ -28,15 +28,26 @@ const Documentos = () => {
   const handleApprove = async (orderId: string, doc: DocType) => {
     setDownloadState("processing");
     try {
-      const { data, error } = await supabase.functions.invoke("verify-payment", {
+      // Record purchase in backend
+      const { error } = await supabase.functions.invoke("verify-payment", {
         body: { orderId, documentId: doc.id },
       });
-      if (error) throw error;
-      if (data?.downloadUrl) {
-        setDownloadUrl(data.downloadUrl);
+      if (error) console.error("Payment record error:", error);
+
+      // Use local file if available, otherwise use backend signed URL
+      if (doc.downloadFile) {
+        setDownloadUrl(doc.downloadFile);
         setDownloadState("success");
       } else {
-        throw new Error("No download URL");
+        const { data } = await supabase.functions.invoke("verify-payment", {
+          body: { orderId, documentId: doc.id },
+        });
+        if (data?.downloadUrl) {
+          setDownloadUrl(data.downloadUrl);
+          setDownloadState("success");
+        } else {
+          throw new Error("No download URL");
+        }
       }
     } catch (err) {
       console.error("Payment verification error:", err);
