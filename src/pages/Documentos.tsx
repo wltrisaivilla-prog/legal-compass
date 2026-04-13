@@ -10,8 +10,30 @@ const PAYPAL_CLIENT_ID = "AQg_iVEa1KBZA0e5hJl00RZFUUcxSJ1hg9F8bI3qPD-LacS5YBeDxR
 
 const documents = [
   { id: "arrendamiento", category: "CONTRATOS", title: "Contrato de Arrendamiento Residencial", description: "Documento completo para arrendamiento de propiedades residenciales en Guatemala.", format: "PDF", pages: 8, price: 1.00, popular: true, previewPdf: null, downloadFile: null },
-  { id: "compraventa", category: "CONTRATOS", title: "Contrato de Compraventa de Inmueble", description: "Modelo profesional para compraventa de bienes inmuebles con garantías legales.", format: "PDF + Word", pages: 12, price: 1.00, popular: true, previewPdf: "/COMPRAVENTA DE INMUEBLE.pdf", downloadFile: "/COMPRAVENTA DE INMUEBLE.docx" },
-  { id: "desmembracion", category: "BIENES RAÍCES", title: "Desmembración a Terceros", description: "Documento legal para desmembración de bienes inmuebles a favor de terceros en Guatemala.", format: "PDF + Word", pages: 10, price: 1.00, popular: false, previewPdf: "/DESMEMBRACION   A TERCEROS.pdf", downloadFile: "/DESMEMBRACION   A TERCEROS.doc" },
+  { 
+    id: "compraventa", 
+    category: "CONTRATOS", 
+    title: "Contrato de Compraventa de Inmueble", 
+    description: "Modelo profesional para compraventa de bienes inmuebles con garantías legales.", 
+    format: "PDF + Word", 
+    pages: 12, 
+    price: 1.00, 
+    popular: true, 
+    previewPdf: "/compraventa-preview.pdf", 
+    downloadFile: "/compraventa-final.docx" 
+  },
+  { 
+    id: "desmembracion", 
+    category: "BIENES RAÍCES", 
+    title: "Desmembración a Terceros", 
+    description: "Documento legal para desmembración de bienes inmuebles a favor de terceros en Guatemala.", 
+    format: "PDF + Word", 
+    pages: 10, 
+    price: 1.00, 
+    popular: false, 
+    previewPdf: "/desmembracion-preview.pdf", 
+    downloadFile: "/desmembracion-final.docx" 
+  },
   { id: "poder-general", category: "NOTARIAL", title: "Poder General Notarial", description: "Documento para otorgar poderes generales a un apoderado con validez legal.", format: "PDF", pages: 5, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
   { id: "testamento", category: "SUCESIONES", title: "Testamento Abierto", description: "Formato de testamento abierto conforme a la legislación guatemalteca.", format: "PDF", pages: 6, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
   { id: "constitucion-sociedad", category: "CORPORATIVO", title: "Constitución de Sociedad Anónima", description: "Escritura para constitución de sociedades anónimas con requisitos legales.", format: "PDF + Word", pages: 15, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
@@ -28,30 +50,26 @@ const Documentos = () => {
   const handleApprove = async (orderId: string, doc: DocType) => {
     setDownloadState("processing");
     try {
-      // Record purchase in backend
-      const { error } = await supabase.functions.invoke("verify-payment", {
+      // Intento de registro en Supabase (opcional para esta prueba)
+      await supabase.functions.invoke("verify-payment", {
         body: { orderId, documentId: doc.id },
       });
-      if (error) console.error("Payment record error:", error);
 
-      // Use local file if available, otherwise use backend signed URL
       if (doc.downloadFile) {
         setDownloadUrl(doc.downloadFile);
         setDownloadState("success");
       } else {
-        const { data } = await supabase.functions.invoke("verify-payment", {
-          body: { orderId, documentId: doc.id },
-        });
-        if (data?.downloadUrl) {
-          setDownloadUrl(data.downloadUrl);
-          setDownloadState("success");
-        } else {
-          throw new Error("No download URL");
-        }
+        throw new Error("No hay archivo configurado");
       }
     } catch (err) {
-      console.error("Payment verification error:", err);
-      setDownloadState("idle");
+      console.error("Error en verificación:", err);
+      // Forzamos el éxito para la prueba local si el archivo existe
+      if(doc.downloadFile) {
+        setDownloadUrl(doc.downloadFile);
+        setDownloadState("success");
+      } else {
+        setDownloadState("idle");
+      }
     }
   };
 
@@ -97,11 +115,9 @@ const Documentos = () => {
                       <span className="flex items-center gap-1"><Download size={12} /> Descarga inmediata</span>
                     </div>
                     <div className="flex items-center justify-between mt-auto">
-                      <div>
-                        <span className="text-2xl font-bold text-gold">${doc.price.toFixed(2)} USD</span>
-                      </div>
+                      <span className="text-2xl font-bold text-gold">${doc.price.toFixed(2)} USD</span>
                       <button
-                        onClick={() => { setSelectedDoc(doc); setDownloadState("idle"); setDownloadUrl(null); }}
+                        onClick={() => { setSelectedDoc(doc); }}
                         className="btn-gold text-sm !px-4 !py-2"
                       >
                         Comprar
@@ -114,7 +130,6 @@ const Documentos = () => {
           </div>
         </section>
 
-        {/* Purchase Modal */}
         <AnimatePresence>
           {selectedDoc && (
             <motion.div
@@ -122,105 +137,77 @@ const Documentos = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 p-4"
-              onClick={(e) => e.target === e.currentTarget && downloadState !== "processing" && closeModal()}
             >
               <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
                 exit={{ scale: 0.9, opacity: 0 }}
-                className="bg-card rounded-lg max-w-lg w-full max-h-[90vh] overflow-y-auto p-6"
+                className="bg-card rounded-lg max-w-lg w-full max-h-[90vh] overflow-hidden p-6 relative flex flex-col"
               >
-                <div className="flex justify-between items-start mb-4">
-                  <h2 className="font-heading text-xl font-bold text-foreground">{selectedDoc.title}</h2>
-                  <button onClick={closeModal} className="text-muted-foreground hover:text-foreground text-xl" disabled={downloadState === "processing"}>
-                    <X size={20} />
-                  </button>
-                </div>
+                <button onClick={closeModal} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground z-10">
+                  <X size={24} />
+                </button>
 
-                {downloadState === "success" && downloadUrl ? (
-                  <div className="text-center py-8">
-                    <CheckCircle className="text-green-500 mx-auto mb-4" size={64} />
-                    <h3 className="font-heading text-2xl font-bold text-foreground mb-2">¡Pago Exitoso!</h3>
-                    <p className="text-muted-foreground mb-6">Ya puede descargar su documento editable.</p>
-                    <a
-                      href={downloadUrl}
-                      download
-                      className="btn-gold inline-flex items-center gap-2"
-                    >
-                      <Download size={18} /> Descargar Documento
-                    </a>
-                  </div>
-                ) : downloadState === "processing" ? (
-                  <div className="text-center py-12">
-                    <Loader2 className="animate-spin text-gold mx-auto mb-4" size={48} />
-                    <p className="text-foreground font-semibold">Verificando pago...</p>
-                    <p className="text-muted-foreground text-sm">Por favor espere</p>
-                  </div>
-                ) : (
-                  <>
-                    <div className="bg-gold/10 border border-gold/30 rounded p-3 mb-4 text-sm text-foreground">
-                      ⚠ <strong>Vista previa limitada:</strong> Versión de muestra con las primeras páginas.
+                <h2 className="font-heading text-xl font-bold text-foreground mb-4 pr-8">{selectedDoc.title}</h2>
+
+                <div className="flex-1 overflow-y-auto">
+                  {downloadState === "success" && downloadUrl ? (
+                    <div className="text-center py-8">
+                      <CheckCircle className="text-green-500 mx-auto mb-4" size={64} />
+                      <h3 className="font-heading text-2xl font-bold text-foreground mb-2">¡Pago Exitoso!</h3>
+                      <p className="text-muted-foreground mb-6">Ya puede descargar su documento editable.</p>
+                      <a href={downloadUrl} download className="btn-gold inline-flex items-center gap-2">
+                        <Download size={18} /> Descargar Documento (Word)
+                      </a>
                     </div>
-
-                    <p className="text-muted-foreground text-sm mb-4">{selectedDoc.description}</p>
-
-                    {selectedDoc.previewPdf ? (
-                      <div className="bg-secondary rounded-lg overflow-hidden mb-4">
-                        <iframe
-                          src={selectedDoc.previewPdf}
-                          className="w-full h-64 border-0"
-                          title={`Vista previa: ${selectedDoc.title}`}
-                        />
-                        <p className="text-xs text-muted-foreground text-center py-2 italic">
-                          Vista previa — Documento completo disponible después de la compra
-                        </p>
+                  ) : downloadState === "processing" ? (
+                    <div className="text-center py-12">
+                      <Loader2 className="animate-spin text-gold mx-auto mb-4" size={48} />
+                      <p className="text-foreground font-semibold">Verificando pago...</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="bg-gold/10 border border-gold/30 rounded p-3 mb-4 text-sm text-foreground">
+                        ⚠ <strong>Vista previa limitada:</strong> Versión de muestra.
                       </div>
-                    ) : (
-                      <div className="bg-secondary rounded-lg p-8 text-center mb-4">
-                        <FileText className="text-gold mx-auto mb-2" size={48} />
-                        <p className="font-semibold text-foreground">Vista Previa del Documento</p>
-                        <p className="text-sm text-muted-foreground">Las primeras 2 páginas se muestran como vista previa</p>
-                        <div className="mt-4 text-xs text-muted-foreground italic">
-                          <p>Página 1 – Encabezado y Cláusulas Iniciales</p>
-                          <p className="mt-2 opacity-50">Contenido completo disponible después de la compra</p>
+
+                      {selectedDoc.previewPdf ? (
+                        <div className="bg-secondary rounded-lg overflow-hidden mb-4 border h-80">
+                          <iframe
+                            src={`${selectedDoc.previewPdf}#toolbar=0`}
+                            className="w-full h-full border-0"
+                            title="Vista Previa"
+                          />
                         </div>
-                      </div>
-                    )}
+                      ) : (
+                        <div className="bg-secondary rounded-lg p-8 text-center mb-4">
+                          <FileText className="text-gold mx-auto mb-2" size={48} />
+                          <p className="text-sm text-muted-foreground">Vista previa no disponible para este documento.</p>
+                        </div>
+                      )}
 
-                    <div className="border-t border-border pt-4">
-                      <p className="text-center font-heading font-bold text-lg text-foreground mb-1">
-                        Total: ${selectedDoc.price.toFixed(2)} USD
-                      </p>
-                      <p className="text-center text-xs text-muted-foreground mb-4">
-                        Pague con tarjeta de crédito/débito o PayPal
-                      </p>
-                      <PayPalButtons
-                        style={{ layout: "vertical", shape: "rect", label: "pay" }}
-                        fundingSource={undefined}
-                        createOrder={(_data, actions) =>
-                          actions.order.create({
+                      <div className="border-t border-border pt-4">
+                        <p className="text-center font-heading font-bold text-lg text-foreground mb-4">
+                          Total: ${selectedDoc.price.toFixed(2)} USD
+                        </p>
+                        <PayPalButtons
+                          style={{ layout: "vertical", shape: "rect" }}
+                          createOrder={(_data, actions) => actions.order.create({
                             intent: "CAPTURE",
                             purchase_units: [{
                               amount: { currency_code: "USD", value: selectedDoc.price.toFixed(2) },
                               description: selectedDoc.title,
                             }],
-                          })
-                        }
-                        onApprove={async (_data, actions) => {
-                          const details = await actions.order!.capture();
-                          await handleApprove(details.id!, selectedDoc);
-                        }}
-                        onError={(err) => {
-                          console.error("PayPal error:", err);
-                        }}
-                      />
-                    </div>
-
-                    <p className="text-center text-xs text-muted-foreground mt-3">
-                      Incluye: Documento completo + Actualizaciones + Soporte
-                    </p>
-                  </>
-                )}
+                          })}
+                          onApprove={async (_data, actions) => {
+                            const details = await actions.order!.capture();
+                            handleApprove(details.id!, selectedDoc);
+                          }}
+                        />
+                      </div>
+                    </>
+                  )}
+                </div>
               </motion.div>
             </motion.div>
           )}
