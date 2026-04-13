@@ -140,12 +140,11 @@ const Documentos = () => {
                 {downloadState === "success" && downloadUrl ? (
                   <div className="text-center py-8">
                     <CheckCircle className="text-green-500 mx-auto mb-4" size={64} />
-                    <h3 className="font-heading text-2xl font-bold text-foreground mb-2">¡Compra Exitosa!</h3>
-                    <p className="text-muted-foreground mb-6">Su documento está listo para descargar. El enlace expira en 5 minutos.</p>
+                    <h3 className="font-heading text-2xl font-bold text-foreground mb-2">¡Pago Exitoso!</h3>
+                    <p className="text-muted-foreground mb-6">Ya puede descargar su documento editable.</p>
                     <a
                       href={downloadUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      download
                       className="btn-gold inline-flex items-center gap-2"
                     >
                       <Download size={18} /> Descargar Documento
