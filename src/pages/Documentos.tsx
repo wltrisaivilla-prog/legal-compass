@@ -6,6 +6,7 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 
+// ID de cliente configurado para el entorno actual
 const PAYPAL_CLIENT_ID = "AQg_iVEa1KBZA0e5hJl00RZFUUcxSJ1hg9F8bI3qPD-LacS5YBeDxRDeG8APHT9CzqZsJqWcE59i2cdH";
 
 const documents = [
@@ -32,8 +33,8 @@ const documents = [
     price: 1.00, 
     popular: false, 
     previewPdf: "/desmembracion-preview.pdf", 
-    // Corregido: Coincide con el nombre real en tu carpeta public
-    downloadFile: "/desmembracion-final.docx.doc" 
+    // Corregido: Coincide exactamente con el archivo en la carpeta public de GitHub
+    downloadFile: "/desmembracion-final.docx" 
   },
   { id: "poder-general", category: "NOTARIAL", title: "Poder General Notarial", description: "Documento para otorgar poderes generales a un apoderado con validez legal.", format: "PDF", pages: 5, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
   { id: "testamento", category: "SUCESIONES", title: "Testamento Abierto", description: "Formato de testamento abierto conforme a la legislación guatemalteca.", format: "PDF", pages: 6, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
@@ -63,6 +64,7 @@ const Documentos = () => {
       }
     } catch (err) {
       console.error("Error en verificación:", err);
+      // Fallback para permitir descarga si el archivo existe
       if(doc.downloadFile) {
         setDownloadUrl(doc.downloadFile);
         setDownloadState("success");
@@ -155,7 +157,7 @@ const Documentos = () => {
                       <CheckCircle className="text-green-500 mx-auto mb-4" size={64} />
                       <h3 className="font-heading text-2xl font-bold text-foreground mb-2">¡Pago Exitoso!</h3>
                       <p className="text-muted-foreground mb-6">Ya puede descargar su documento editable.</p>
-                      {/* Corregido: Atributo download para forzar extensión .docx */}
+                      {/* Corregido: Fuerza el nombre del archivo y la extensión .docx */}
                       <a 
                         href={downloadUrl} 
                         download={`${selectedDoc.title.replace(/\s+/g, '_')}.docx`}
