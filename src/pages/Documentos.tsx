@@ -32,7 +32,8 @@ const documents = [
     price: 1.00, 
     popular: false, 
     previewPdf: "/desmembracion-preview.pdf", 
-    downloadFile: "/desmembracion-final.docx" 
+    // Corregido: Coincide con el nombre real en tu carpeta public
+    downloadFile: "/desmembracion-final.docx.doc" 
   },
   { id: "poder-general", category: "NOTARIAL", title: "Poder General Notarial", description: "Documento para otorgar poderes generales a un apoderado con validez legal.", format: "PDF", pages: 5, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
   { id: "testamento", category: "SUCESIONES", title: "Testamento Abierto", description: "Formato de testamento abierto conforme a la legislación guatemalteca.", format: "PDF", pages: 6, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
@@ -50,7 +51,6 @@ const Documentos = () => {
   const handleApprove = async (orderId: string, doc: DocType) => {
     setDownloadState("processing");
     try {
-      // Intento de registro en Supabase (opcional para esta prueba)
       await supabase.functions.invoke("verify-payment", {
         body: { orderId, documentId: doc.id },
       });
@@ -63,7 +63,6 @@ const Documentos = () => {
       }
     } catch (err) {
       console.error("Error en verificación:", err);
-      // Forzamos el éxito para la prueba local si el archivo existe
       if(doc.downloadFile) {
         setDownloadUrl(doc.downloadFile);
         setDownloadState("success");
@@ -156,7 +155,12 @@ const Documentos = () => {
                       <CheckCircle className="text-green-500 mx-auto mb-4" size={64} />
                       <h3 className="font-heading text-2xl font-bold text-foreground mb-2">¡Pago Exitoso!</h3>
                       <p className="text-muted-foreground mb-6">Ya puede descargar su documento editable.</p>
-                      <a href={downloadUrl} download className="btn-gold inline-flex items-center gap-2">
+                      {/* Corregido: Atributo download para forzar extensión .docx */}
+                      <a 
+                        href={downloadUrl} 
+                        download={`${selectedDoc.title.replace(/\s+/g, '_')}.docx`}
+                        className="btn-gold inline-flex items-center gap-2"
+                      >
                         <Download size={18} /> Descargar Documento (Word)
                       </a>
                     </div>
