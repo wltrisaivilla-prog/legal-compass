@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import AnimatedSection from "@/components/AnimatedSection";
-import { useState, useEffect } from "react"; // Agregamos useEffect
-import { Phone, Mail, MapPin, Clock, MessageCircle, Send, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Phone, Mail, MapPin, Clock, MessageCircle, Send, Loader2 } from "lucide-center";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -13,21 +13,21 @@ const Contacto = () => {
 
   const whatsappUrl = `https://wa.me/50258997508?text=${encodeURIComponent("Hola, me gustaría obtener información sobre sus servicios legales.")}`;
 
-  // Lógica del horario integrada en React
   useEffect(() => {
     const actualizarEstado = () => {
       const ahora = new Date();
+      // Ajuste para zona horaria de Guatemala
       const opciones: Intl.DateTimeFormatOptions = { timeZone: "America/Guatemala", hour12: false, hour: "2-digit" };
       const horaGuate = parseInt(ahora.toLocaleTimeString("en-US", opciones));
-      const diaGuate = ahora.getDay(); // 0: Domingo, 1: Lunes...
+      const diaGuate = ahora.getDay(); 
 
       let estado = "Cerrado";
-      let color = "#f87171"; // Rojo
+      let color = "#f87171"; // Rojo para cerrado
 
       if (diaGuate >= 1 && diaGuate <= 5) { // Lunes a Viernes
         if (horaGuate >= 8 && horaGuate < 18) {
           estado = "Abierto";
-          color = "#4ade80"; // Verde
+          color = "#4ade80"; // Verde para abierto
         }
       } else if (diaGuate === 6) { // Sábados
         if (horaGuate >= 8 && horaGuate < 12) {
@@ -118,7 +118,7 @@ const Contacto = () => {
                 <MapPin className="text-gold mt-1 flex-shrink-0" size={20} />
                 <div>
                   <p className="font-semibold text-foreground">Dirección</p>
-                  <p className="text-muted-foreground text-sm">Ruta 6, 5-34 zona 4 Guatemala, Guatemala</p>
+                  <p className="text-muted-foreground text-sm">Ruta 6, 5-34 zona 4 Ciudad de Guatemala</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -147,16 +147,17 @@ const Contacto = () => {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between"><span className="text-foreground">Lunes a Viernes</span><span className="text-muted-foreground">8:00 - 18:00</span></div>
                 <div className="flex justify-between"><span className="text-foreground">Sábado</span><span className="text-muted-foreground">8:00 - 12:00</span></div>
-                <div className="flex justify-between"><span className="text-foreground">Domingo</span><span className="text-destructive">Cerrado</span></div>
+                <div className="flex justify-between"><span className="text-foreground">Domingo</span><span className="text-destructive font-bold">Cerrado</span></div>
               </div>
             </div>
 
-            <div className="rounded-lg overflow-hidden shadow-md">
+            {/* Mapa corregido para Litigios de Guatemala en Zona 4 */}
+            <div className="rounded-lg overflow-hidden shadow-md border border-gold/20">
               <iframe
                 title="Ubicación de Litigios de Guatemala"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m12!1m3!1d3861.123!2d-90.516!3d14.619!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDM3JzA4LjQiTiA5MMKwMzAnNTcuNiJX!5e0!3m2!1ses!2sgt!4v1700000000000!5m2!1ses!2sgt"
+                src="http://googleusercontent.com/maps.google.com/8"
                 width="100%"
-                height="300"
+                height="350"
                 style={{ border: 0 }}
                 allowFullScreen
                 loading="lazy"
