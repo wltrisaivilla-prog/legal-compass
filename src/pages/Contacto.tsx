@@ -1,6 +1,6 @@
 import Layout from "@/components/Layout";
 import AnimatedSection from "@/components/AnimatedSection";
-import { useState } from "react";
+import { useState, useEffect } from "react"; // Agregamos useEffect
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,7 +9,40 @@ const Contacto = () => {
   const { toast } = useToast();
   const [form, setForm] = useState({ name: "", email: "", subject: "", message: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [estadoHorario, setEstadoHorario] = useState({ texto: "Cargando...", color: "gray" });
+
   const whatsappUrl = `https://wa.me/50258997508?text=${encodeURIComponent("Hola, me gustaría obtener información sobre sus servicios legales.")}`;
+
+  // Lógica del horario integrada en React
+  useEffect(() => {
+    const actualizarEstado = () => {
+      const ahora = new Date();
+      const opciones: Intl.DateTimeFormatOptions = { timeZone: "America/Guatemala", hour12: false, hour: "2-digit" };
+      const horaGuate = parseInt(ahora.toLocaleTimeString("en-US", opciones));
+      const diaGuate = ahora.getDay(); // 0: Domingo, 1: Lunes...
+
+      let estado = "Cerrado";
+      let color = "#f87171"; // Rojo
+
+      if (diaGuate >= 1 && diaGuate <= 5) { // Lunes a Viernes
+        if (horaGuate >= 8 && horaGuate < 18) {
+          estado = "Abierto";
+          color = "#4ade80"; // Verde
+        }
+      } else if (diaGuate === 6) { // Sábados
+        if (horaGuate >= 8 && horaGuate < 12) {
+          estado = "Abierto";
+          color = "#4ade80";
+        }
+      }
+
+      setEstadoHorario({ texto: estado, color: color });
+    };
+
+    actualizarEstado();
+    const interval = setInterval(actualizarEstado, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -106,7 +139,10 @@ const Contacto = () => {
 
             <div className="bg-secondary rounded-lg p-6 mb-8">
               <h3 className="font-heading text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                <Clock className="text-gold" size={20} /> Horario de Atención: <span id="estado-horario" className="ml-1">Cargando...</span>
+                <Clock className="text-gold" size={20} /> Horario de Atención: 
+                <span style={{ color: estadoHorario.color, marginLeft: '8px' }}>
+                  {estadoHorario.texto}
+                </span>
               </h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between"><span className="text-foreground">Lunes a Viernes</span><span className="text-muted-foreground">8:00 - 18:00</span></div>
@@ -118,7 +154,7 @@ const Contacto = () => {
             <div className="rounded-lg overflow-hidden shadow-md">
               <iframe
                 title="Ubicación de Litigios de Guatemala"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.16123456789!2d-90.518!3d14.618!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDM3JzA0LjgiTiA5MMKwMzEnMDQuOCJX!5e0!3m2!1ses!2sgt!4v1234567890123"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m12!1m3!1d3861.123!2d-90.516!3d14.619!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDM3JzA4LjQiTiA5MMKwMzAnNTcuNiJX!5e0!3m2!1ses!2sgt!4v1700000000000!5m2!1ses!2sgt"
                 width="100%"
                 height="300"
                 style={{ border: 0 }}
