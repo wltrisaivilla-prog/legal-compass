@@ -6,7 +6,9 @@
     <title>Litigios de Guatemala | Asesoría Jurídica Profesional</title>
     <meta name="description" content="Litigios de Guatemala - Firma de abogados con más de 25 años de experiencia. Servicios legales en materia mercantil, notarial, penal, laboral, bienes raíces y más.">
     <meta name="author" content="Litigios de Guatemala" />
-    <link rel="icon" href="/favicon.png" type="image/png" />
+    
+    <link rel="icon" href="/favicon.png" type="image/png" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/favicon.png" />
 
     <meta property="og:title" content="Litigios de Guatemala | Asesoría Jurídica">
     <meta property="og:description" content="Firma de abogados con más de 25 años de experiencia en Guatemala. Servicios legales especializados.">
@@ -21,6 +23,46 @@
 
   <body>
     <div id="root"></div>
+    
     <script type="module" src="/src/main.tsx"></script>
+
+    <script>
+      function actualizarEstadoHorario() {
+        const ahora = new Date();
+        // Ajuste manual a hora de Guatemala (UTC-6)
+        const opciones = { timeZone: "America/Guatemala", hour12: false, hour: "2-digit" };
+        const horaGuate = parseInt(ahora.toLocaleTimeString("en-US", opciones));
+        const diaGuate = ahora.getDay(); // 0: Domingo, 1: Lunes...
+
+        let estado = "Cerrado";
+        let color = "#f87171"; // Rojo
+
+        // Lunes a Viernes (8:00 a 18:00)
+        if (diaGuate >= 1 && diaGuate <= 5) {
+          if (horaGuate >= 8 && horaGuate < 18) {
+            estado = "Abierto";
+            color = "#4ade80"; // Verde
+          }
+        } 
+        // Sábados (8:00 a 12:00)
+        else if (diaGuate === 6) {
+          if (horaGuate >= 8 && horaGuate < 12) {
+            estado = "Abierto";
+            color = "#4ade80";
+          }
+        }
+
+        const el = document.getElementById("estado-horario");
+        if (el) {
+          el.innerHTML = estado;
+          el.style.color = color;
+          el.style.fontWeight = "bold";
+        }
+      }
+
+      // Ejecutar al cargar y cada minuto por si cambia la hora mientras ven la web
+      window.onload = actualizarEstadoHorario;
+      setInterval(actualizarEstadoHorario, 60000);
+    </script>
   </body>
 </html>
