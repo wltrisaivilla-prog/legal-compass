@@ -9,7 +9,8 @@ const Footer = () => {
         <div>
           <h3 className="text-gold font-heading text-lg font-bold mb-4">Litigios de Guatemala</h3>
           <p className="text-sm text-primary-foreground/80 mb-4">
-            Especialistas en resolución efectiva de conflictos legales. 25 años de experiencia nos respaldan.
+            {/* Se añade "en Zona 4" para mejorar el SEO local */}
+            Especialistas en resolución efectiva de conflictos legales en Zona 4, Ciudad de Guatemala. 25 años de experiencia nos respaldan.
           </p>
           <div className="flex gap-3">
             <a href="https://www.facebook.com/share/14SHAyi5EGd/" target="_blank" rel="noopener noreferrer" className="hover:text-gold transition-colors" aria-label="Facebook">
@@ -38,24 +39,32 @@ const Footer = () => {
           </ul>
         </div>
 
-        {/* Popular Documents */}
+        {/* Services / Keywords for SEO */}
         <div>
-          <h3 className="text-gold font-heading text-lg font-bold mb-4">Documentos Populares</h3>
+          <h3 className="text-gold font-heading text-lg font-bold mb-4">Servicios Legales</h3>
           <ul className="space-y-2 text-sm">
-            <li><Link to="/documentos" className="hover:text-gold transition-colors">Contrato de Arrendamiento</Link></li>
-            <li><Link to="/documentos" className="hover:text-gold transition-colors">Contrato de Compraventa</Link></li>
-            <li><Link to="/documentos" className="hover:text-gold transition-colors">Poder General</Link></li>
-            <li><Link to="/documentos" className="hover:text-gold transition-colors">Testamento</Link></li>
+            <li><Link to="/servicios" className="hover:text-gold transition-colors">Derecho Mercantil</Link></li>
+            <li><Link to="/servicios" className="hover:text-gold transition-colors">Derecho Penal</Link></li>
+            <li><Link to="/servicios" className="hover:text-gold transition-colors">Asesoría Laboral</Link></li>
+            <li><Link to="/servicios" className="hover:text-gold transition-colors">Trámites Notariales</Link></li>
           </ul>
         </div>
 
         {/* Contact */}
         <div>
-          <h3 className="text-gold font-heading text-lg font-bold mb-4">Contacto</h3>
+          <h3 className="text-gold font-heading text-lg font-bold mb-4">Ubicación en Zona 4</h3>
           <ul className="space-y-3 text-sm">
             <li className="flex items-start gap-2">
               <MapPin size={16} className="text-gold mt-0.5 flex-shrink-0" />
-              <span>Ruta 6, 5-34 zona 4 Guatemala, Guatemala</span>
+              {/* Enlace directo a Google Maps para reforzar la autoridad de ubicación */}
+              <a 
+                href="https://maps.google.com/?q=Ruta+6+5-34+zona+4+Guatemala" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="hover:text-gold transition-colors"
+              >
+                Ruta 6, 5-34 zona 4, Ciudad de Guatemala
+              </a>
             </li>
             <li className="flex items-center gap-2">
               <Phone size={16} className="text-gold flex-shrink-0" />
@@ -69,21 +78,17 @@ const Footer = () => {
               <Clock size={16} className="text-gold flex-shrink-0" />
               <span>Lun-Vie: 8:00 - 18:00</span>
             </li>
-            <li className="flex items-center gap-2">
-              <Clock size={16} className="text-gold flex-shrink-0" />
-              <span>Sáb: 8:00 - 12:00</span>
-            </li>
           </ul>
         </div>
       </div>
 
-      <div className="border-t border-navy-light">
+      <div className="border-t border-white/10">
         <div className="container mx-auto py-4 text-center text-xs text-primary-foreground/60">
-          © {new Date().getFullYear()} Litigios de Guatemala. Todos los derechos reservados.
+          © {new Date().getFullYear()} Litigios de Guatemala | Abogados en Ciudad de Guatemala, Zona 4.
         </div>
       </div>
     </footer>
   );
-};
+}; 
 
 export default Footer;
