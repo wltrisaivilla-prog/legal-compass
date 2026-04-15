@@ -106,7 +106,7 @@ const Contacto = () => {
 
             <div className="bg-secondary rounded-lg p-6 mb-8">
               <h3 className="font-heading text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-                <Clock className="text-gold" size={20} /> Horario de Atención
+                <Clock className="text-gold" size={20} /> Horario de Atención: <span id="estado-horario" className="ml-1">Cargando...</span>
               </h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between"><span className="text-foreground">Lunes a Viernes</span><span className="text-muted-foreground">8:00 - 18:00</span></div>
@@ -118,7 +118,7 @@ const Contacto = () => {
             <div className="rounded-lg overflow-hidden shadow-md">
               <iframe
                 title="Ubicación de Litigios de Guatemala"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3860.9!2d-90.515!3d14.625!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDM3JzMwLjAiTiA5MMKwMzAnNTQuMCJX!5e0!3m2!1ses!2sgt!4v1"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.16123456789!2d-90.518!3d14.618!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTTCsDM3JzA0LjgiTiA5MMKwMzEnMDQuOCJX!5e0!3m2!1ses!2sgt!4v1234567890123"
                 width="100%"
                 height="300"
                 style={{ border: 0 }}
