@@ -18,7 +18,8 @@ const QuienesSomos = () => (
     <section className="bg-primary py-16 text-center">
       <h1 className="font-heading text-4xl text-primary-foreground italic font-bold">Quiénes Somos</h1>
       <div className="gold-underline mt-2" />
-      <p className="text-primary-foreground/80 mt-4">Más de 25 años protegiendo sus derechos</p>
+      {/* Se añade referencia geográfica en el subtítulo principal */}
+      <p className="text-primary-foreground/80 mt-4">Más de 25 años protegiendo sus derechos desde la Zona 4 de la Ciudad de Guatemala</p>
     </section>
 
     <section className="section-padding bg-background">
@@ -27,10 +28,14 @@ const QuienesSomos = () => (
           <AnimatedSection>
             <h2 className="font-heading text-3xl text-foreground italic font-bold mb-2">Nuestra Historia</h2>
             <div className="w-16 h-1 bg-gold mb-8" />
-            <p className="text-foreground mb-4">Fundada en 1999, <strong>Litigios de Guatemala</strong> nació con la visión de transformar la manera en que los guatemaltecos acceden a servicios legales de calidad. Lo que comenzó como un pequeño bufete especializado en litigio civil, hoy se ha convertido en una firma de referencia nacional con más de 25 años de trayectoria.</p>
+            {/* Se optimiza el primer párrafo con palabras clave de ubicación */}
+            <p className="text-foreground mb-4">
+              Fundada en 1999, <strong>Litigios de Guatemala</strong> nació con la visión de transformar la manera en que los guatemaltecos acceden a servicios legales de calidad. Establecidos en el corazón de la <strong>Zona 4</strong>, lo que comenzó como un pequeño bufete especializado en litigio civil, hoy se ha convertido en una firma de referencia nacional con más de 25 años de trayectoria.
+            </p>
             <p className="text-foreground mb-4">A lo largo de estos años, hemos evolucionado para ofrecer soluciones integrales que van desde la mediación y arbitraje hasta el litigio complejo, siempre manteniendo nuestro compromiso con la excelencia, la transparencia y los resultados concretos para nuestros clientes.</p>
             <p className="text-foreground mb-4">Hemos participado en más de <strong>1,000 casos resueltos exitosamente</strong>, construyendo una reputación sólida basada en la confianza y el profesionalismo.</p>
-            <p className="text-foreground">Nuestro equipo está compuesto por abogados especializados en diferentes áreas del derecho, lo que nos permite ofrecer un servicio integral y multidisciplinario.</p>
+            {/* Se refuerza el concepto de "Abogados en Zona 4" */}
+            <p className="text-foreground">Nuestro equipo está compuesto por <strong>abogados especializados en diferentes áreas del derecho en la Ciudad de Guatemala</strong>, lo que nos permite ofrecer un servicio integral y multidisciplinario desde nuestra oficina central.</p>
           </AnimatedSection>
 
           <AnimatedSection delay={0.2} className="lg:sticky lg:top-24">
