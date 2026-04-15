@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useState, useEffect } from "react";
-import { Phone, Mail, MapPin, Clock, MessageCircle, Send, Loader2 } from "lucide-center";
+import { Phone, Mail, MapPin, Clock, MessageCircle, Send, Loader2 } from "lucide-react"; // Corregido de 'lucide-center'
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -16,20 +16,23 @@ const Contacto = () => {
   useEffect(() => {
     const actualizarEstado = () => {
       const ahora = new Date();
-      // Ajuste para zona horaria de Guatemala
+      // Configuración para la zona horaria de Guatemala
       const opciones: Intl.DateTimeFormatOptions = { timeZone: "America/Guatemala", hour12: false, hour: "2-digit" };
-      const horaGuate = parseInt(ahora.toLocaleTimeString("en-US", opciones));
+      const horaGuate = parseInt(new Intl.DateTimeFormat("en-US", opciones).format(ahora));
       const diaGuate = ahora.getDay(); 
 
       let estado = "Cerrado";
-      let color = "#f87171"; // Rojo para cerrado
+      let color = "#f87171"; // Rojo
 
-      if (diaGuate >= 1 && diaGuate <= 5) { // Lunes a Viernes
+      // Lunes (1) a Viernes (5) de 8:00 a 18:00
+      if (diaGuate >= 1 && diaGuate <= 5) {
         if (horaGuate >= 8 && horaGuate < 18) {
           estado = "Abierto";
-          color = "#4ade80"; // Verde para abierto
+          color = "#4ade80"; // Verde
         }
-      } else if (diaGuate === 6) { // Sábados
+      } 
+      // Sábados (6) de 8:00 a 12:00
+      else if (diaGuate === 6) {
         if (horaGuate >= 8 && horaGuate < 12) {
           estado = "Abierto";
           color = "#4ade80";
@@ -84,11 +87,11 @@ const Contacto = () => {
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Nombre *</label>
-                <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none" maxLength={100} disabled={isSubmitting} />
+                <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none" maxLength={100} disabled={isSubmitting} required />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Email *</label>
-                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none" maxLength={255} disabled={isSubmitting} />
+                <input type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none" maxLength={255} disabled={isSubmitting} required />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Asunto</label>
@@ -96,7 +99,7 @@ const Contacto = () => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Mensaje *</label>
-                <textarea rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none resize-none" maxLength={1000} disabled={isSubmitting} />
+                <textarea rows={5} value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none resize-none" maxLength={1000} disabled={isSubmitting} required />
               </div>
               <button type="submit" className="btn-gold flex items-center gap-2" disabled={isSubmitting}>
                 {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Send size={16} />}
@@ -151,11 +154,11 @@ const Contacto = () => {
               </div>
             </div>
 
-            {/* Mapa corregido para Litigios de Guatemala en Zona 4 */}
+            {/* Mapa corregido: Se utiliza una URL de inserción válida para la dirección en Zona 4 */}
             <div className="rounded-lg overflow-hidden shadow-md border border-gold/20">
               <iframe
                 title="Ubicación de Litigios de Guatemala"
-                src="http://googleusercontent.com/maps.google.com/8"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3860.972322588339!2d-90.5173715!3d14.6133189!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8589a3ca49234f9d%3A0x67341851221f7a0e!2sRuta%206%205-34%2C%20Guatemala!5e0!3m2!1ses!2sgt!4v1713180000000!5m2!1ses!2sgt"
                 width="100%"
                 height="350"
                 style={{ border: 0 }}
