@@ -194,10 +194,13 @@ const Documentos = () => {
                       <CheckCircle className="text-green-500 mx-auto mb-4" size={64} />
                       <h3 className="font-heading text-2xl font-bold text-foreground mb-2">¡Pago Exitoso!</h3>
                       <p className="text-muted-foreground mb-6">Ya puede descargar su documento editable.</p>
-                      {/* Corregido: Fuerza el nombre del archivo y la extensión .docx */}
-                      <a 
-                        href={downloadUrl} 
-                        download={`${selectedDoc.title.replace(/\s+/g, '_')}.docx`}
+                      <a
+                        href={downloadUrl}
+                        download={
+                          downloadFileName
+                            ? `${selectedDoc.title.replace(/\s+/g, "_")}.${downloadFileName.split(".").pop()}`
+                            : `${selectedDoc.title.replace(/\s+/g, "_")}.docx`
+                        }
                         className="btn-gold inline-flex items-center gap-2"
                       >
                         <Download size={18} /> Descargar Documento (Word)
@@ -210,6 +213,11 @@ const Documentos = () => {
                     </div>
                   ) : (
                     <>
+                      {errorMessage && (
+                        <div className="bg-destructive/10 border border-destructive/30 text-destructive rounded p-3 mb-4 text-sm">
+                          {errorMessage}
+                        </div>
+                      )}
                       <div className="bg-gold/10 border border-gold/30 rounded p-3 mb-4 text-sm text-foreground">
                         ⚠ <strong>Vista previa limitada:</strong> Versión de muestra.
                       </div>
