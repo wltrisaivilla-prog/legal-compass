@@ -6,8 +6,8 @@ import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 
-// ID de cliente configurado para el entorno actual
-const PAYPAL_CLIENT_ID = "AQg_iVEa1KBZA0e5hJl00RZFUUcxSJ1hg9F8bI3qPD-LacS5YBeDxRDeG8APHT9CzqZsJqWcE59i2cdH";
+// Cliente PayPal: leído desde variables de entorno (no hardcoded en el código fuente)
+const PAYPAL_CLIENT_ID = import.meta.env.VITE_PAYPAL_CLIENT_ID ?? "";
 
 const documents = [
   {
@@ -19,7 +19,6 @@ const documents = [
     price: 1.00,
     popular: true,
     previewPdf: "/compraventa-preview.pdf",
-    downloadFile: "/compraventa-final.docx"
   },
   {
     id: "desmembracion",
@@ -30,7 +29,6 @@ const documents = [
     price: 1.00,
     popular: false,
     previewPdf: "/desmembracion-preview.pdf",
-    downloadFile: "/desmembracion-final.docx"
   },
   {
     id: "mandato-especial",
@@ -41,7 +39,6 @@ const documents = [
     price: 1.00,
     popular: true,
     previewPdf: "/MANDATOESPECIALJUDICIALCONREPRESENTACIÓN.pdf",
-    downloadFile: "/MANDATOESPECIALJUDICIALCONREPRESENTACIÓN.doc"
   },
   {
     id: "identificacion-persona",
@@ -52,7 +49,6 @@ const documents = [
     price: 1.00,
     popular: false,
     previewPdf: "/CONTRATODEIDENTIFICACIONDEPERSONA.pdf",
-    downloadFile: "/CONTRATODEIDENTIFICACIONDEPERSONA.docx"
   },
   {
     id: "compraventa-usufructo",
@@ -63,7 +59,6 @@ const documents = [
     price: 1.00,
     popular: false,
     previewPdf: "/COMPRAVENTACONRESERVADEUSUFRUCTO.pdf",
-    downloadFile: "/COMPRAVENTACONRESERVADEUSUFRUCTO.docx"
   },
 ];
 
@@ -74,29 +69,32 @@ const Documentos = () => {
   const [previewDoc, setPreviewDoc] = useState<DocType | null>(null);
   const [downloadState, setDownloadState] = useState<"idle" | "processing" | "success">("idle");
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [downloadFileName, setDownloadFileName] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleApprove = async (orderId: string, doc: DocType) => {
     setDownloadState("processing");
+    setErrorMessage(null);
     try {
-      await supabase.functions.invoke("verify-payment", {
+      const { data, error } = await supabase.functions.invoke("verify-payment", {
         body: { orderId, documentId: doc.id },
       });
 
-      if (doc.downloadFile) {
-        setDownloadUrl(doc.downloadFile);
-        setDownloadState("success");
-      } else {
-        throw new Error("No hay archivo configurado");
+      if (error || !data?.downloadUrl) {
+        throw new Error(data?.error || error?.message || "No se pudo verificar el pago");
       }
+
+      setDownloadUrl(data.downloadUrl);
+      setDownloadFileName(data.fileName ?? null);
+      setDownloadState("success");
     } catch (err) {
       console.error("Error en verificación:", err);
-      // Fallback para permitir descarga si el archivo existe
-      if(doc.downloadFile) {
-        setDownloadUrl(doc.downloadFile);
-        setDownloadState("success");
-      } else {
-        setDownloadState("idle");
-      }
+      setErrorMessage(
+        err instanceof Error
+          ? err.message
+          : "No se pudo verificar el pago. Contacte soporte con su ID de orden."
+      );
+      setDownloadState("idle");
     }
   };
 
@@ -104,6 +102,8 @@ const Documentos = () => {
     setSelectedDoc(null);
     setDownloadState("idle");
     setDownloadUrl(null);
+    setDownloadFileName(null);
+    setErrorMessage(null);
   };
 
   const closePreview = useCallback(() => setPreviewDoc(null), []);
