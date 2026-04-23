@@ -10,36 +10,66 @@ import { supabase } from "@/integrations/supabase/client";
 const PAYPAL_CLIENT_ID = "AQg_iVEa1KBZA0e5hJl00RZFUUcxSJ1hg9F8bI3qPD-LacS5YBeDxRDeG8APHT9CzqZsJqWcE59i2cdH";
 
 const documents = [
-  { id: "arrendamiento", category: "CONTRATOS", title: "Contrato de Arrendamiento Residencial", description: "Documento completo para arrendamiento de propiedades residenciales en Guatemala.", format: "PDF", pages: 8, price: 1.00, popular: true, previewPdf: null, downloadFile: null },
-  { 
-    id: "compraventa", 
-    category: "CONTRATOS", 
-    title: "Contrato de Compraventa de Inmueble", 
-    description: "Modelo profesional para compraventa de bienes inmuebles con garantías legales.", 
-    format: "PDF + Word", 
-    pages: 12, 
-    price: 1.00, 
-    popular: true, 
-    previewPdf: "/compraventa-preview.pdf", 
-    downloadFile: "/compraventa-final.docx" 
+  {
+    id: "compraventa",
+    category: "CONTRATOS",
+    title: "Contrato de Compraventa de Inmueble",
+    description: "Modelo profesional para compraventa de bienes inmuebles con garantías legales.",
+    format: "PDF + Word",
+    pages: 12,
+    price: 1.00,
+    popular: true,
+    previewPdf: "/compraventa-preview.pdf",
+    downloadFile: "/compraventa-final.docx"
   },
-  { 
-    id: "desmembracion", 
-    category: "BIENES RAÍCES", 
-    title: "Desmembración a Terceros", 
-    description: "Documento legal para desmembración de bienes inmuebles a favor de terceros en Guatemala.", 
-    format: "PDF + Word", 
-    pages: 10, 
-    price: 1.00, 
-    popular: false, 
-    previewPdf: "/desmembracion-preview.pdf", 
-    // Corregido: Coincide exactamente con el archivo en la carpeta public de GitHub
-    downloadFile: "/desmembracion-final.docx" 
+  {
+    id: "desmembracion",
+    category: "BIENES RAÍCES",
+    title: "Desmembración a Terceros",
+    description: "Documento legal para desmembración de bienes inmuebles a favor de terceros en Guatemala.",
+    format: "PDF + Word",
+    pages: 10,
+    price: 1.00,
+    popular: false,
+    previewPdf: "/desmembracion-preview.pdf",
+    downloadFile: "/desmembracion-final.docx"
   },
-  { id: "poder-general", category: "NOTARIAL", title: "Poder General Notarial", description: "Documento para otorgar poderes generales a un apoderado con validez legal.", format: "PDF", pages: 5, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
-  { id: "testamento", category: "SUCESIONES", title: "Testamento Abierto", description: "Formato de testamento abierto conforme a la legislación guatemalteca.", format: "PDF", pages: 6, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
-  { id: "constitucion-sociedad", category: "CORPORATIVO", title: "Constitución de Sociedad Anónima", description: "Escritura para constitución de sociedades anónimas con requisitos legales.", format: "PDF + Word", pages: 15, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
-  { id: "contrato-laboral", category: "LABORAL", title: "Contrato de Trabajo", description: "Modelo de contrato individual conforme al Código de Trabajo de Guatemala.", format: "PDF", pages: 6, price: 1.00, popular: false, previewPdf: null, downloadFile: null },
+  {
+    id: "mandato-especial",
+    category: "NOTARIAL",
+    title: "Mandato Especial Judicial con Representación",
+    description: "Documento para otorgar mandato especial judicial con representación legal en Guatemala.",
+    format: "PDF + Word",
+    pages: 8,
+    price: 1.00,
+    popular: true,
+    previewPdf: "/MANDATOESPECIALJUDICIALCONREPRESENTACIÓN.pdf",
+    downloadFile: "/MANDATOESPECIALJUDICIALCONREPRESENTACIÓN.doc"
+  },
+  {
+    id: "identificacion-persona",
+    category: "NOTARIAL",
+    title: "Contrato de Identificación de Persona",
+    description: "Documento legal para la identificación de persona conforme a la legislación guatemalteca.",
+    format: "PDF + Word",
+    pages: 6,
+    price: 1.00,
+    popular: false,
+    previewPdf: "/CONTRATODEIDENTIFICACIONDEPERSONA.pdf",
+    downloadFile: "/CONTRATODEIDENTIFICACIONDEPERSONA.docx"
+  },
+  {
+    id: "compraventa-usufructo",
+    category: "BIENES RAÍCES",
+    title: "Compraventa con Reserva de Usufructo",
+    description: "Documento para compraventa de inmuebles con reserva de usufructo vitalicio.",
+    format: "PDF + Word",
+    pages: 10,
+    price: 1.00,
+    popular: false,
+    previewPdf: "/COMPRAVENTACONRESERVADEUSUFRUCTO.pdf",
+    downloadFile: "/COMPRAVENTACONRESERVADEUSUFRUCTO.docx"
+  },
 ];
 
 type DocType = typeof documents[0];
