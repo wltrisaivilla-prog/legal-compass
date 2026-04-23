@@ -16,7 +16,6 @@ const documents = [
     title: "Contrato de Compraventa de Inmueble",
     description: "Modelo profesional para compraventa de bienes inmuebles con garantías legales.",
     format: "PDF + Word",
-    pages: 12,
     price: 1.00,
     popular: true,
     previewPdf: "/compraventa-preview.pdf",
@@ -28,7 +27,6 @@ const documents = [
     title: "Desmembración a Terceros",
     description: "Documento legal para desmembración de bienes inmuebles a favor de terceros en Guatemala.",
     format: "PDF + Word",
-    pages: 10,
     price: 1.00,
     popular: false,
     previewPdf: "/desmembracion-preview.pdf",
@@ -40,7 +38,6 @@ const documents = [
     title: "Mandato Especial Judicial con Representación",
     description: "Documento para otorgar mandato especial judicial con representación legal en Guatemala.",
     format: "PDF + Word",
-    pages: 8,
     price: 1.00,
     popular: true,
     previewPdf: "/MANDATOESPECIALJUDICIALCONREPRESENTACIÓN.pdf",
@@ -52,7 +49,6 @@ const documents = [
     title: "Contrato de Identificación de Persona",
     description: "Documento legal para la identificación de persona conforme a la legislación guatemalteca.",
     format: "PDF + Word",
-    pages: 6,
     price: 1.00,
     popular: false,
     previewPdf: "/CONTRATODEIDENTIFICACIONDEPERSONA.pdf",
@@ -64,7 +60,6 @@ const documents = [
     title: "Compraventa con Reserva de Usufructo",
     description: "Documento para compraventa de inmuebles con reserva de usufructo vitalicio.",
     format: "PDF + Word",
-    pages: 10,
     price: 1.00,
     popular: false,
     previewPdf: "/COMPRAVENTACONRESERVADEUSUFRUCTO.pdf",
@@ -138,7 +133,6 @@ const Documentos = () => {
                       </span>
                     )}
                     <FileText className="text-gold mb-2" size={48} />
-                    <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded">{doc.pages} páginas</span>
                   </div>
                   <div className="p-5 flex flex-col flex-1">
                     <span className="text-xs text-gold font-semibold tracking-wider">{doc.category}</span>
