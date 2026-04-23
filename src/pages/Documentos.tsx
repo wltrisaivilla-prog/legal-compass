@@ -1,7 +1,7 @@
 import Layout from "@/components/Layout";
 import AnimatedSection from "@/components/AnimatedSection";
-import { FileText, Star, Download, CheckCircle, Loader2, X } from "lucide-react";
-import { useState } from "react";
+import { FileText, Star, Download, CheckCircle, Loader2, X, Eye } from "lucide-react";
+import { useState, useCallback } from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -76,6 +76,7 @@ type DocType = typeof documents[0];
 
 const Documentos = () => {
   const [selectedDoc, setSelectedDoc] = useState<DocType | null>(null);
+  const [previewDoc, setPreviewDoc] = useState<DocType | null>(null);
   const [downloadState, setDownloadState] = useState<"idle" | "processing" | "success">("idle");
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
 
@@ -109,6 +110,8 @@ const Documentos = () => {
     setDownloadState("idle");
     setDownloadUrl(null);
   };
+
+  const closePreview = useCallback(() => setPreviewDoc(null), []);
 
   return (
     <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "USD", intent: "capture" }}>
@@ -147,12 +150,22 @@ const Documentos = () => {
                     </div>
                     <div className="flex items-center justify-between mt-auto">
                       <span className="text-2xl font-bold text-gold">${doc.price.toFixed(2)} USD</span>
-                      <button
-                        onClick={() => { setSelectedDoc(doc); }}
-                        className="btn-gold text-sm !px-4 !py-2"
-                      >
-                        Comprar
-                      </button>
+                      <div className="flex items-center gap-2">
+                        {doc.previewPdf && (
+                          <button
+                            onClick={() => setPreviewDoc(doc)}
+                            className="btn-outline-gold text-sm !px-3 !py-2 flex items-center gap-1"
+                          >
+                            <Eye size={14} /> Vista Previa
+                          </button>
+                        )}
+                        <button
+                          onClick={() => { setSelectedDoc(doc); }}
+                          className="btn-gold text-sm !px-4 !py-2"
+                        >
+                          Comprar
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -243,6 +256,43 @@ const Documentos = () => {
                       </div>
                     </>
                   )}
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Modal de Vista Previa PDF */}
+        <AnimatePresence>
+          {previewDoc && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 p-4"
+              onClick={closePreview}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                exit={{ scale: 0.9, opacity: 0 }}
+                className="bg-card rounded-lg max-w-3xl w-full max-h-[90vh] overflow-hidden p-6 relative flex flex-col"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button onClick={closePreview} className="absolute top-4 right-4 text-muted-foreground hover:text-foreground z-10">
+                  <X size={24} />
+                </button>
+                <h2 className="font-heading text-xl font-bold text-foreground mb-4 pr-8">{previewDoc.title}</h2>
+                <div className="bg-gold/10 border border-gold/30 rounded p-3 mb-4 text-sm text-foreground">
+                  ⚠ <strong>Vista previa:</strong> Versión de muestra del documento.
+                </div>
+                <div className="flex-1 bg-secondary rounded-lg overflow-hidden border" style={{ minHeight: "60vh" }}>
+                  <iframe
+                    src={`${previewDoc.previewPdf}#toolbar=0`}
+                    className="w-full h-full border-0"
+                    style={{ minHeight: "60vh" }}
+                    title={`Vista Previa - ${previewDoc.title}`}
+                  />
                 </div>
               </motion.div>
             </motion.div>
