@@ -3,7 +3,6 @@ import AnimatedSection from "@/components/AnimatedSection";
 import { useState, useEffect } from "react";
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send, Loader2 } from "lucide-react"; // Corregido de 'lucide-center'
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 
 const Contacto = () => {
   const { toast } = useToast();
@@ -56,11 +55,13 @@ const Contacto = () => {
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.functions.invoke("notify-contact", {
-        body: { name: form.name, email: form.email, subject: form.subject, message: form.message },
+      const res = await fetch("https://formspree.io/f/xkokkjak", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: form.name, email: form.email, subject: form.subject, message: form.message }),
       });
 
-      if (error) throw error;
+      if (!res.ok) throw new Error("Formspree error");
 
       toast({ title: "Mensaje enviado", description: "Su mensaje ha sido recibido. Nos pondremos en contacto pronto." });
       setForm({ name: "", email: "", subject: "", message: "" });
