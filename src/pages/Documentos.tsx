@@ -63,6 +63,16 @@ const documents = [
     popular: false,
     previewPdf: "/COMPRAVENTACONRESERVADEUSUFRUCTO.pdf",
   },
+  {
+    id: "acta-notarial-nombramiento",
+    category: "NOTARIAL",
+    title: "Acta Notarial de Nombramiento",
+    description: "Acta notarial de nombramiento conforme a la legislación guatemalteca.",
+    format: "PDF + Word",
+    price: 1.00,
+    popular: false,
+    previewPdf: "/acta-notarial-nombramiento-preview.pdf",
+  },
 ];
 
 type DocType = typeof documents[0];
