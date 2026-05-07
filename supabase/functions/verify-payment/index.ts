@@ -13,6 +13,7 @@ const DOCUMENTS: Record<string, { file: string; amount: number }> = {
   "mandato-especial": { file: "mandato-especial.doc", amount: 1.0 },
   "identificacion-persona": { file: "identificacion-persona.docx", amount: 1.0 },
   "compraventa-usufructo": { file: "compraventa-usufructo.docx", amount: 1.0 },
+  "acta-notarial-nombramiento": { file: "acta-notarial-nombramiento.docx", amount: 1.0 },
 };
 
 Deno.serve(async (req) => {
