@@ -4,7 +4,7 @@ import licenciado from "@/assets/licenciado.png";
 
 const WelcomeBanner = () => {
   return (
-    <section className="relative bg-navy-dark text-primary-foreground overflow-hidden">
+    <section className="relative bg-navy-dark text-primary-foreground">
       {/* Fade into the photo section above */}
       <div className="pointer-events-none absolute inset-x-0 -top-20 md:-top-28 h-20 md:h-28 bg-gradient-to-b from-transparent to-navy-dark z-10" />
       {/* Fade into the photo section below */}
