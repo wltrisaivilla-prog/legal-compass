@@ -16,12 +16,13 @@ const WelcomeBanner = () => {
           >
             <div className="relative w-48 h-60 sm:w-56 sm:h-72 md:w-64 md:h-80 rounded-lg overflow-hidden border-4 border-gold shadow-xl">
               <img
-                src={licenciado.url}
+                src={licenciado}
                 alt="Licenciado - Litigios de Guatemala"
                 className="w-full h-full object-cover object-top"
                 width={320}
                 height={400}
               />
+
             </div>
           </motion.div>
 
