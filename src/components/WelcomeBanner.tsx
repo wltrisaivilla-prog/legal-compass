@@ -4,8 +4,10 @@ import licenciado from "@/assets/licenciado.png";
 
 const WelcomeBanner = () => {
   return (
-    <section className="bg-navy-dark text-primary-foreground overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+    <section className="relative bg-navy-dark text-primary-foreground overflow-hidden">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-24 md:h-32 bg-gradient-to-b from-navy-dark to-transparent z-10" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 md:h-32 bg-gradient-to-t from-navy-dark to-transparent z-10" />
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
