@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import licenciado from "@/assets/licenciado.png.asset.json";
+import licenciado from "@/assets/licenciado.png";
+
 
 const WelcomeBanner = () => {
   return (
