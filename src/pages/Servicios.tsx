@@ -2,9 +2,9 @@ import Layout from "@/components/Layout";
 import AnimatedSection from "@/components/AnimatedSection";
 import {
   Building2, FileText, Home, Shield, Gavel, Users,
-  Briefcase, Car, ChevronDown, MessageCircle,
+  Briefcase, Car, ChevronDown, MessageCircle, Search, X,
 } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const WHATSAPP_NUMBER = "50258997508";
@@ -143,6 +143,31 @@ const buildWhatsAppUrl = (servicio: string) =>
 
 const Servicios = () => {
   const [expandedCat, setExpandedCat] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+
+  const normalize = (value: string) =>
+    value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+  const totalServicios = useMemo(
+    () => categorias.reduce((acc, cat) => acc + cat.servicios.length, 0),
+    []
+  );
+
+  const resultados = useMemo(() => {
+    const q = normalize(query);
+    if (!q) return categorias;
+    return categorias
+      .map((cat) => {
+        const matchCategoria = normalize(cat.title).includes(q);
+        const servicios = matchCategoria
+          ? cat.servicios
+          : cat.servicios.filter((s) => normalize(s).includes(q));
+        return { ...cat, servicios };
+      })
+      .filter((cat) => cat.servicios.length > 0);
+  }, [query]);
+
+  const isSearching = normalize(query).length > 0;
 
   return (
     <Layout>
@@ -152,19 +177,55 @@ const Servicios = () => {
         </h1>
         <div className="gold-underline mt-2" />
         <p className="text-primary-foreground/80 mt-4">
-          Más de 80 servicios legales especializados para toda Guatemala
+          {totalServicios} servicios legales especializados para toda Guatemala
         </p>
       </section>
 
       <section className="section-padding bg-background">
         <div className="container mx-auto max-w-4xl space-y-4">
-          {categorias.map((cat, i) => {
-            const isOpen = expandedCat === cat.title;
+          <div className="relative mb-8">
+            <Search
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              size={18}
+              aria-hidden="true"
+            />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar un servicio o categoría..."
+              aria-label="Buscar servicios"
+              className="w-full rounded-lg border border-border bg-card py-3 pl-11 pr-11 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-gold"
+            />
+            {query && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                aria-label="Limpiar búsqueda"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <X size={18} />
+              </button>
+            )}
+          </div>
+
+          {resultados.length === 0 && (
+            <p className="text-center text-muted-foreground py-10">
+              No encontramos servicios para “{query}”. Intente con otra palabra.
+            </p>
+          )}
+
+          {resultados.map((cat, i) => {
+            const isOpen = isSearching || expandedCat === cat.title;
+            const panelId = `servicios-panel-${i}`;
             return (
               <AnimatedSection key={cat.title} delay={i * 0.05}>
                 <div className="border border-border rounded-lg overflow-hidden bg-card">
                   <button
-                    onClick={() => setExpandedCat(isOpen ? null : cat.title)}
+                    type="button"
+                    aria-expanded={isOpen}
+                    aria-controls={panelId}
+                    onClick={() => setExpandedCat(expandedCat === cat.title ? null : cat.title)}
                     className="w-full flex items-center justify-between p-5 hover:bg-secondary/50 transition-colors"
                   >
                     <div className="flex items-center gap-3">
@@ -185,6 +246,7 @@ const Servicios = () => {
                   <AnimatePresence>
                     {isOpen && (
                       <motion.div
+                        id={panelId}
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: "auto", opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
@@ -206,9 +268,10 @@ const Servicios = () => {
                                   href={buildWhatsAppUrl(s)}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="flex-shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold text-white bg-[#25D366] hover:bg-[#1da851] px-3 py-1.5 rounded-full transition-colors"
+                                  aria-label={`Consultar por WhatsApp sobre ${s}`}
+                                  className="flex-shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold text-whatsapp-foreground bg-whatsapp hover:bg-whatsapp-dark px-3 py-1.5 rounded-full transition-colors"
                                 >
-                                  <MessageCircle size={14} />
+                                  <MessageCircle size={14} aria-hidden="true" />
                                   Consultar
                                 </a>
                               </li>
