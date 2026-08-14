@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { FileText, MessageCircle } from "lucide-react";
+import { FileText, MessageCircle, Scale } from "lucide-react";
 import licenciado from "@/assets/licenciado.png";
 
 
@@ -54,6 +54,10 @@ const WelcomeBanner = () => {
               <Link to="/documentos" className="btn-gold inline-flex items-center justify-center gap-2">
                 <FileText className="w-5 h-5" />
                 Ver Documentos
+              </Link>
+              <Link to="/servicios" className="btn-outline-gold inline-flex items-center justify-center gap-2">
+                <Scale className="w-5 h-5" />
+                Ver Servicios
               </Link>
               <Link to="/contacto" className="btn-outline-gold inline-flex items-center justify-center gap-2">
                 <MessageCircle className="w-5 h-5" />
