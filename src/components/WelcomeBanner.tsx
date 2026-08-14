@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+import { FileText, MessageCircle } from "lucide-react";
 import licenciado from "@/assets/licenciado.png";
 
 
@@ -47,6 +49,17 @@ const WelcomeBanner = () => {
             <p className="text-primary-foreground/90 text-lg md:text-xl max-w-2xl">
               Asesoría Jurídica Profesional con el compromiso de brindarle soluciones legales claras, seguras y a la medida de sus necesidades.
             </p>
+
+            <div className="mt-7 flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+              <Link to="/documentos" className="btn-gold inline-flex items-center justify-center gap-2">
+                <FileText className="w-5 h-5" />
+                Ver Documentos
+              </Link>
+              <Link to="/contacto" className="btn-outline-gold inline-flex items-center justify-center gap-2">
+                <MessageCircle className="w-5 h-5" />
+                Asesoría Personalizada
+              </Link>
+            </div>
           </motion.div>
         </div>
       </div>
