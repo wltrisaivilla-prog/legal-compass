@@ -56,6 +56,11 @@ export default {
           light: "hsl(var(--gold-light))",
           dark: "hsl(var(--gold-dark))",
         },
+        whatsapp: {
+          DEFAULT: "hsl(var(--whatsapp))",
+          dark: "hsl(var(--whatsapp-dark))",
+          foreground: "hsl(var(--whatsapp-foreground))",
+        },
         navy: {
           DEFAULT: "hsl(var(--navy))",
           dark: "hsl(var(--navy-dark))",
