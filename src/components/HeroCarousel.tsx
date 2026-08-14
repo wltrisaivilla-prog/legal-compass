@@ -17,8 +17,8 @@ const slides = [
     image: heroOffice,
     title: "Documentos Legales Profesionales",
     subtitle: "Plantillas listas para usar con vista previa incluida",
-    cta1: { label: "Ver Documentos", link: "/documentos" },
-    cta2: { label: "Asesoría Personalizada", link: "/contacto" },
+    cta1: { label: "Explorar Catálogo", link: "/documentos" },
+    cta2: { label: "Preguntas Frecuentes", link: "/faq" },
   },
 ];
 
