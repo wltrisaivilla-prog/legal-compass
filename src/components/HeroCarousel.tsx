@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import heroJustice from "@/assets/hero-justice.jpg";
 import heroOffice from "@/assets/hero-office.jpg";
@@ -10,15 +9,11 @@ const slides = [
     image: heroJustice,
     title: "Asesoría Legal Especializada",
     subtitle: "Más de 80 servicios legales para personas y empresas en Guatemala",
-    cta1: { label: "Ver Servicios", link: "/servicios" },
-    cta2: { label: "Consulta", link: "/contacto" },
   },
   {
     image: heroOffice,
     title: "Documentos Legales Profesionales",
     subtitle: "Plantillas listas para usar con vista previa incluida",
-    cta1: { label: "Explorar Catálogo", link: "/documentos" },
-    cta2: { label: "Preguntas Frecuentes", link: "/faq" },
   },
 ];
 
@@ -59,13 +54,7 @@ const HeroCarousel = () => {
             <h1 className="font-heading text-4xl md:text-6xl text-primary-foreground italic font-bold mb-4 max-w-4xl">
               {slide.title}
             </h1>
-            <p className="text-primary-foreground/90 text-lg md:text-xl mb-8 max-w-2xl">{slide.subtitle}</p>
-            <div className="flex gap-4">
-              <Link to={slide.cta1.link} className="btn-gold">{slide.cta1.label}</Link>
-              <Link to={slide.cta2.link} className="btn-outline-gold border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 hover:text-primary-foreground">
-                {slide.cta2.label}
-              </Link>
-            </div>
+            <p className="text-primary-foreground/90 text-lg md:text-xl max-w-2xl">{slide.subtitle}</p>
           </motion.div>
         </AnimatePresence>
       </div>
