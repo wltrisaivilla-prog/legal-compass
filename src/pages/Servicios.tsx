@@ -171,21 +171,23 @@ const Servicios = () => {
 
   return (
     <Layout>
-      <section className="bg-primary py-16 text-center">
-        <h1 className="font-heading text-4xl text-primary-foreground italic font-bold">
-          Catálogo de Servicios
-        </h1>
-        <div className="gold-underline mt-2" />
-        <p className="text-primary-foreground/80 mt-4">
-          {totalServicios} servicios legales especializados para toda Guatemala
-        </p>
-      </section>
+      <section className="relative bg-primary py-20 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,hsl(var(--gold)/0.18),transparent_60%)]" />
+        <div className="container mx-auto relative text-center max-w-3xl">
+          <span className="inline-block text-xs tracking-[0.25em] uppercase text-gold mb-4">
+            Litigios de Guatemala
+          </span>
+          <h1 className="font-heading text-4xl md:text-5xl text-primary-foreground italic font-bold">
+            Catálogo de Servicios
+          </h1>
+          <div className="gold-underline mt-2" />
+          <p className="text-primary-foreground/80 mt-5">
+            {totalServicios} servicios legales especializados en {categorias.length} áreas de práctica
+          </p>
 
-      <section className="section-padding bg-background">
-        <div className="container mx-auto max-w-4xl space-y-4">
-          <div className="relative mb-8">
+          <div className="relative mt-8">
             <Search
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-foreground/50"
               size={18}
               aria-hidden="true"
             />
@@ -195,100 +197,106 @@ const Servicios = () => {
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Buscar un servicio o categoría..."
               aria-label="Buscar servicios"
-              className="w-full rounded-lg border border-border bg-card py-3 pl-11 pr-11 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-gold"
+              className="w-full rounded-full border border-primary-foreground/20 bg-primary-foreground/10 py-3.5 pl-11 pr-11 text-sm text-primary-foreground placeholder:text-primary-foreground/50 backdrop-blur focus:outline-none focus:ring-2 focus:ring-gold"
             />
             {query && (
               <button
                 type="button"
                 onClick={() => setQuery("")}
                 aria-label="Limpiar búsqueda"
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-primary-foreground/60 hover:text-gold transition-colors"
               >
                 <X size={18} />
               </button>
             )}
           </div>
+        </div>
+      </section>
 
+      <section className="section-padding bg-background">
+        <div className="container mx-auto max-w-6xl">
           {resultados.length === 0 && (
             <p className="text-center text-muted-foreground py-10">
               No encontramos servicios para “{query}”. Intente con otra palabra.
             </p>
           )}
 
-          {resultados.map((cat, i) => {
-            const isOpen = isSearching || expandedCat === cat.title;
-            const panelId = `servicios-panel-${i}`;
-            return (
-              <AnimatedSection key={cat.title} delay={i * 0.05}>
-                <div className="border border-border rounded-lg overflow-hidden bg-card">
-                  <button
-                    type="button"
-                    aria-expanded={isOpen}
-                    aria-controls={panelId}
-                    onClick={() => setExpandedCat(expandedCat === cat.title ? null : cat.title)}
-                    className="w-full flex items-center justify-between p-5 hover:bg-secondary/50 transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <cat.icon className="text-gold flex-shrink-0" size={28} />
-                      <h2 className="font-heading text-lg font-bold text-foreground text-left">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 items-start">
+            {resultados.map((cat, i) => {
+              const isOpen = isSearching || expandedCat === cat.title;
+              const panelId = `servicios-panel-${i}`;
+              return (
+                <AnimatedSection key={cat.title} delay={i * 0.05}>
+                  <div className="group h-full rounded-2xl border border-border bg-card shadow-sm hover:shadow-xl hover:border-gold/50 transition-all duration-300 overflow-hidden">
+                    <button
+                      type="button"
+                      aria-expanded={isOpen}
+                      aria-controls={panelId}
+                      onClick={() => setExpandedCat(expandedCat === cat.title ? null : cat.title)}
+                      className="w-full text-left p-6"
+                    >
+                      <div className="flex items-start justify-between gap-4">
+                        <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-gold/10 text-gold group-hover:bg-gold group-hover:text-primary transition-colors">
+                          <cat.icon size={24} />
+                        </span>
+                        <ChevronDown
+                          className={`text-gold mt-3 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                          size={20}
+                        />
+                      </div>
+                      <h2 className="font-heading text-lg font-bold text-foreground mt-4">
                         {cat.title}
                       </h2>
-                      <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                        {cat.servicios.length}
-                      </span>
-                    </div>
-                    <ChevronDown
-                      className={`text-gold transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
-                      size={22}
-                    />
-                  </button>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {cat.servicios.length} servicio{cat.servicios.length === 1 ? "" : "s"} disponibles
+                      </p>
+                    </button>
 
-                  <AnimatePresence>
-                    {isOpen && (
-                      <motion.div
-                        id={panelId}
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="border-t border-border px-5 pb-5">
-                          <ul className="divide-y divide-border">
-                            {cat.servicios.map((s) => (
-                              <li
-                                key={s}
-                                className="flex items-center justify-between py-3 gap-3"
-                              >
-                                <div className="flex items-center gap-2 min-w-0">
-                                  <span className="w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0" />
-                                  <span className="text-sm text-foreground">{s}</span>
-                                </div>
-                                <a
-                                  href={buildWhatsAppUrl(s)}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  aria-label={`Consultar por WhatsApp sobre ${s}`}
-                                  className="flex-shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold text-whatsapp-foreground bg-whatsapp hover:bg-whatsapp-dark px-3 py-1.5 rounded-full transition-colors"
-                                >
-                                  <MessageCircle size={14} aria-hidden="true" />
-                                  Consultar
-                                </a>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-              </AnimatedSection>
-            );
-          })}
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          id={panelId}
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="border-t border-border px-6 py-4">
+                            <ul className="space-y-3">
+                              {cat.servicios.map((s) => (
+                                <li key={s} className="flex items-start justify-between gap-3">
+                                  <div className="flex items-start gap-2 min-w-0">
+                                    <span className="mt-2 w-1.5 h-1.5 rounded-full bg-gold flex-shrink-0" />
+                                    <span className="text-sm text-foreground leading-snug">{s}</span>
+                                  </div>
+                                  <a
+                                    href={buildWhatsAppUrl(s)}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label={`Consultar por WhatsApp sobre ${s}`}
+                                    className="flex-shrink-0 inline-flex items-center gap-1.5 text-xs font-semibold text-whatsapp-foreground bg-whatsapp hover:bg-whatsapp-dark px-3 py-1.5 rounded-full transition-colors"
+                                  >
+                                    <MessageCircle size={14} aria-hidden="true" />
+                                    Consultar
+                                  </a>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </AnimatedSection>
+              );
+            })}
+          </div>
         </div>
       </section>
     </Layout>
   );
 };
+
 
 export default Servicios;
