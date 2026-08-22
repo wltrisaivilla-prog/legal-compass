@@ -63,4 +63,4 @@ Allow: /
 User-agent: *
 Allow: /
 
-Sitemap: https://legal-link-guate.lovable.app/sitemap.xml
+Sitemap: https://fuentes-asociados.com/sitemap.xml

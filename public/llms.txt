@@ -26,9 +26,9 @@
 - Bienes raíces y trámites de vehículos
 
 ## Páginas
-- [Inicio](https://legal-link-guate.lovable.app/): presentación de la firma y servicios destacados.
-- [Quiénes Somos](https://legal-link-guate.lovable.app/quienes-somos): trayectoria y equipo.
-- [Servicios](https://legal-link-guate.lovable.app/servicios): catálogo completo de servicios legales con buscador.
-- [Documentos](https://legal-link-guate.lovable.app/documentos): plantillas legales con vista previa en PDF y entrega en Word tras el pago.
-- [Preguntas Frecuentes](https://legal-link-guate.lovable.app/faq): costos, plazos, cobertura y validez de los documentos.
-- [Contacto](https://legal-link-guate.lovable.app/contacto): formulario, teléfono y ubicación.
+- [Inicio](https://fuentes-asociados.com/): presentación de la firma y servicios destacados.
+- [Quiénes Somos](https://fuentes-asociados.com/quienes-somos): trayectoria y equipo.
+- [Servicios](https://fuentes-asociados.com/servicios): catálogo completo de servicios legales con buscador.
+- [Documentos](https://fuentes-asociados.com/documentos): plantillas legales con vista previa en PDF y entrega en Word tras el pago.
+- [Preguntas Frecuentes](https://fuentes-asociados.com/faq): costos, plazos, cobertura y validez de los documentos.
+- [Contacto](https://fuentes-asociados.com/contacto): formulario, teléfono y ubicación.
