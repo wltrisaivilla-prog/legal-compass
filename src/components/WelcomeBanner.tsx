@@ -42,9 +42,10 @@ const WelcomeBanner = () => {
             <p className="text-gold font-semibold tracking-wider uppercase text-sm mb-3">
               Litigios de Guatemala
             </p>
-            <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl italic font-bold text-primary-foreground leading-tight mb-4">
+            <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl italic font-bold text-primary-foreground leading-tight mb-4">
               Bienvenido a Litigios de Guatemala
-            </h2>
+              <span className="sr-only"> | Firma de Abogados y Servicios Legales en Guatemala</span>
+            </h1>
             <div className="w-20 h-1 bg-gold mx-auto md:mx-0 mb-5" />
             <p className="text-primary-foreground/90 text-lg md:text-xl max-w-2xl">
               Asesoría Jurídica Profesional con el compromiso de brindarle soluciones legales claras, seguras y a la medida de sus necesidades.
