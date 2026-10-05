@@ -1,6 +1,6 @@
 import Layout from "@/components/Layout";
 import AnimatedSection from "@/components/AnimatedSection";
-import lawyerPortrait from "@/assets/lawyer-portrait.png";
+import lawyerPortrait from "@/assets/licenciado.png";
 import { Scale, Eye, Heart, Shield, Users, Award } from "lucide-react";
 import { motion } from "framer-motion";
 

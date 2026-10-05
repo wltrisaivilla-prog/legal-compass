@@ -12,7 +12,7 @@ const CTASection = () => (
         <p className="text-muted-foreground mb-8">Contáctenos para una consulta inicial</p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link to="/contacto" className="btn-gold">Consulta</Link>
-          <a href="tel:+50258997508" className="btn-outline-gold flex items-center justify-center gap-2">
+          <a data-event="phone_click" href="tel:+50258997508" className="btn-outline-gold flex items-center justify-center gap-2">
             <Phone size={18} /> +502 5899 7508
           </a>
         </div>

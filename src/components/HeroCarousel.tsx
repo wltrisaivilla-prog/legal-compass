@@ -36,7 +36,7 @@ const HeroCarousel = () => {
           key={i}
           className={`absolute inset-0 transition-opacity duration-700 ${i === current ? "opacity-100" : "opacity-0"}`}
         >
-          <img src={s.image} alt={s.title} className="w-full h-full object-cover" width={1920} height={1080} />
+          <img loading="lazy" src={s.image} alt={s.title} className="w-full h-full object-cover" width={1920} height={1080} />
           <div className="absolute inset-0 bg-primary/60" />
         </div>
       ))}
