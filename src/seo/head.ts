@@ -27,12 +27,13 @@ export function applyRouteSeo(pathname: string) {
   if (!canonical.isConnected) document.head.append(canonical);
   canonicals.forEach((element, index) => { if (index > 0) element.remove(); });
 
-  document.head.querySelectorAll('script[data-route-schema], script#faq-schema').forEach(element => element.remove());
-  if (seo.faqSchema) {
+  document.head.querySelectorAll('script[data-route-schema], script#faq-schema, script#service-schema').forEach(element => element.remove());
+  for (const [id, schema] of [["faq-schema", seo.faqSchema], ["service-schema", seo.serviceSchema]] as const) {
+    if (!schema) continue;
     const script = document.createElement("script");
-    script.id = "faq-schema";
+    script.id = id;
     script.type = "application/ld+json";
-    script.textContent = JSON.stringify(seo.faqSchema);
+    script.textContent = JSON.stringify(schema);
     document.head.append(script);
   }
 }

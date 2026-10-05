@@ -17,10 +17,10 @@ del seguimiento no lo elimina del historial. El archivo local se conserva.
 1. Hacer una copia completa del contenido actual de `public_html`, incluidos archivos
    ocultos y `.htaccess`, fuera de la raíz pública. Conservar la copia del último build
    y su configuración. No iniciar el reemplazo sin este respaldo.
-2. Subir el **contenido** de `dist/` a `public_html`: `index.html`, `spa.html`, las cinco carpetas de rutas, `assets/`, `.htaccess`,
+2. Subir el **contenido** de `dist/` a `public_html`: `index.html`, `spa.html`, las carpetas de rutas (incluidas las seis áreas dentro de servicios/), `assets/`, `.htaccess`,
    `robots.txt`, `sitemap.xml`, `llms.txt`, favicon, documentos PDF/DOC/DOCX/ZIP y demás
    archivos públicos generados. No subir la carpeta `dist` como subcarpeta.
-3. Subir primero assets y documentos; reemplazar después los seis HTML de ruta, `spa.html` y los archivos
+3. Subir primero assets y documentos; reemplazar después los doce HTML de ruta, `spa.html` y los archivos
    de rastreo. Reemplazar únicamente archivos correspondientes a esta aplicación.
 4. **No borrar** otros sitios, subdirectorios, `.well-known`, archivos de validación,
    configuración de Hostinger, uploads, documentos existentes ni los assets del build
@@ -33,7 +33,8 @@ del seguimiento no lo elimina del historial. El archivo local se conserva.
    en el administrador/cliente de archivos para no omitirlo.
 6. Abrir directamente y recargar `/`, `/quienes-somos`, `/servicios`, `/documentos`,
    `/faq` y `/contacto`. Probar navegación, búsquedas de servicios, FAQ, modal de compra
-   y vistas previas. Comprobar títulos, canonical y FAQPage únicamente en `/faq`.
+   y vistas previas. Abrir también las seis URLs /servicios/ por área legal.
+   Comprobar títulos, canonical y FAQPage propio solo en /faq y las seis landings.
    Revisar los archivos de rastreo, imágenes y documentos y que un asset inexistente
    devuelva 404. Formspree y PayPal requieren una prueba autorizada separada de envío
    y pago reales; no realizar operaciones reales como parte de una prueba de humo.
@@ -47,10 +48,11 @@ No se ha desplegado ni cambiado la configuración de producción desde esta rama
 
 ## SEO y rastreo por IA
 
-Las seis rutas comparten una gestión reusable de metadatos, sin duplicación al
+Las doce rutas comparten una gestión reusable de metadatos, sin duplicación al
 navegar. LegalService y WebSite conservan los datos originales. FAQPage utiliza
-exactamente las preguntas y respuestas visibles de `/faq` y se retira al salir.
-El sitemap ya contiene las seis rutas reales y ninguna fecha lastmod inventada.
+exactamente las preguntas y respuestas visibles de `/faq` y se retira al salir. Las seis landings tienen su propio FAQPage y Service,
+enlazado a la misma entidad #firma; no se crean entidades empresariales nuevas.
+El sitemap ya contiene las doce rutas reales y ninguna fecha lastmod inventada.
 robots.txt y llms.txt mantienen los bots permitidos y las URLs actuales.
 Los permisos de robots permiten rastreo, pero no garantizan indexación ni citas por IA.
 
@@ -58,15 +60,15 @@ Los permisos de robots permiten rastreo, pero no garantizan indexación ni citas
 
 El build compila el cliente con Vite, compila un entry SSR temporal en
 .prerender/ y ejecuta scripts/prerender.mjs. React renderToString y StaticRouter
-generan seis páginas sin navegador ni servidor en producción. El generador bloquea
+generan doce páginas sin navegador ni servidor en producción. El generador bloquea
 fetch y conexiones HTTP/TCP: una petición durante el render falla el build.
 No se agregaron dependencias ni se cambió de framework.
 
 src/seo/routes.ts sigue siendo la fuente de títulos/descripciones. El HTML y el
 cliente comparten src/seo/metadata.ts. El schema empresarial original se conserva
-en la plantilla; FAQPage se genera solamente para /faq. El build comprueba cuerpos
+en la plantilla; FAQPage se genera para /faq y para cada landing con sus FAQ propias. El build comprueba cuerpos
 y títulos distintos, metadatos únicos, canonical, schema, imágenes y contenido
-visible. Los tests verifican SSR sin navegador e hidratación de las seis páginas.
+visible. Los tests verifican SSR sin navegador e hidratación de las doce páginas.
 
 El cliente usa hydrateRoot y continúa con BrowserRouter. Un contexto mantiene el
 primer render igual al HTML: las animaciones de entrada dejan el contenido visible
@@ -85,6 +87,12 @@ dist/
   index.html
   quienes-somos/index.html
   servicios/index.html
+  servicios/derecho-laboral/index.html
+  servicios/derecho-penal/index.html
+  servicios/derecho-mercantil/index.html
+  servicios/derecho-familiar/index.html
+  servicios/bienes-raices/index.html
+  servicios/servicios-notariales/index.html
   documentos/index.html
   faq/index.html
   contacto/index.html
@@ -106,6 +114,11 @@ Recursos inexistentes con extensión deben responder 404. Accesos explícitos a
 middleware equivalente para comprobar la prioridad de rutas. Las reglas reales
 deben verificarse manualmente en Hostinger: no se utilizó Apache local ni se aplicó
 este build a producción.
+
+Las seis carpetas nuevas dentro de servicios/ son derecho-laboral, derecho-penal,
+derecho-mercantil, derecho-familiar, bienes-raices y servicios-notariales, cada una
+con index.html. Subirlas junto con todos los HTML y assets nuevos. Para rollback a
+la fase anterior, retirar esas seis carpetas nuevas y restaurar el conjunto previo.
 
 Subir únicamente dist/: .prerender/ contiene código de servidor temporal y no se
 despliega. Recompilar al cambiar contenido/configuración; no hay SSR en vivo.

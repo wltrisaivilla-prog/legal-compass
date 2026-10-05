@@ -1,141 +1,16 @@
+import { Link } from "react-router-dom";
+import { categorias } from "@/data/services";
+import { legalAreas } from "@/data/legal-areas";
 import NoScriptContent from "@/components/NoScriptContent";
 import Layout from "@/components/Layout";
 import AnimatedSection from "@/components/AnimatedSection";
 import {
-  Building2, FileText, Home, Shield, Gavel, Users,
-  Briefcase, Car, ChevronDown, MessageCircle, Search, X,
+  ChevronDown, MessageCircle, Search, X,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const WHATSAPP_NUMBER = "50258997508";
-
-const categorias = [
-  {
-    icon: Building2,
-    title: "Materia Mercantil",
-    servicios: [
-      "Constitución de sociedades",
-      "Modificaciones y ampliaciones",
-      "Empresas mercantiles",
-      "Celebración de Asambleas Ordinarias",
-      "Celebración de Asambleas Extraordinarias",
-      "Punto resolutivo (Punto de actas)",
-      "Títulos de acciones",
-      "Actas Notariales de nombramiento (Auxiliares de comercio)",
-      "Certificaciones",
-      "Cambio de dirección",
-    ],
-  },
-  {
-    icon: Gavel,
-    title: "Actos Notariales",
-    servicios: [
-      "Actas notariales de requerimiento",
-      "Actas notariales de legalización de firmas",
-      "Actas notariales de legalización de documentos",
-      "Liquidación total o parcial de patrimonio conyugal",
-      "Celebraciones de matrimonios nacionales",
-      "Celebraciones de matrimonios (Extranjeros) Mixtos",
-      "Rescisiones",
-      "Ampliaciones",
-      "Carta poder",
-      "Finiquitos",
-      "Mandatos generales, especiales, judiciales",
-      "Contratos de arrendamiento",
-    ],
-  },
-  {
-    icon: Home,
-    title: "Bienes Raíces",
-    servicios: [
-      "Contratos de compraventa",
-      "Contratos de compraventa de propiedad de inmuebles",
-      "Contratos de partición",
-      "División de la cosa común",
-      "Unificación de propiedades",
-      "Constitución de Usufructo",
-      "Carta Total de Pago",
-      "Concesión de Minas",
-      "Declaración Jurada de cambio de ubicación inmuebles",
-      "Declaración jurada de derechos posesorios",
-      "Cesión de derechos posesorios",
-      "Mutuo con garantía hipotecaria",
-      "Cancelación de hipotecas por prescripción",
-      "Inmovilización de propiedades",
-      "Permutas",
-      "Contrato de comodato",
-    ],
-  },
-  {
-    icon: Shield,
-    title: "Materia Penal",
-    servicios: [
-      "Asistencia en hechos de tránsito",
-      "Conciliaciones ante el Ministerio Público",
-      "Procesos Penales",
-      "Violencia contra la mujer",
-      "Negación de asistencia económica",
-    ],
-  },
-  {
-    icon: FileText,
-    title: "Documentos Provenientes del Extranjero",
-    servicios: [
-      "Apostillas",
-      "Mandatos generales, especiales, judiciales ETC",
-      "Nacionalización de hijos de guatemaltecos nacidos en el extranjero",
-      "Protocolización de documentos",
-      "Traducciones juradas inglés español y viceversa",
-    ],
-  },
-  {
-    icon: Gavel,
-    title: "Jurisdicción Voluntaria",
-    servicios: [
-      "Rectificación de partida",
-      "Cambio de nombre",
-      "Proceso sucesorio intestado o testamentario",
-      "Cancelación de partidas",
-      "Inscripción extemporánea",
-      "Avalúos de bienes inmuebles, vehículos, armas de fuego",
-    ],
-  },
-  {
-    icon: Users,
-    title: "Materia Familiar",
-    servicios: [
-      "Pensiones alimenticias",
-      "Obligación de hacer",
-      "Juicios de ejecución",
-    ],
-  },
-  {
-    icon: Briefcase,
-    title: "Materia Laboral",
-    servicios: [
-      "Despidos injustificados",
-      "Reinstalaciones",
-      "Indemnización post mortem",
-      "Procesos contra el Estado",
-    ],
-  },
-  {
-    icon: Car,
-    title: "Vehículos",
-    servicios: [
-      "Traspasos electrónicos",
-      "Traspasos presenciales",
-      "Cambio de uso",
-      "Cambio de placas",
-      "Reposición de placas",
-      "Reposición de tarjeta, título y placas",
-      "Primeras placas de vehículos usados importados",
-      "Inactivaciones",
-      "Activaciones",
-    ],
-  },
-];
 
 const buildWhatsAppUrl = (servicio: string) =>
   `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(
@@ -253,6 +128,9 @@ const Servicios = () => {
                       </p>
                     </button>
 
+                    {legalAreas.find(area => area.category === cat.title) && (
+                      <Link className="block px-6 pb-5 text-sm font-semibold text-gold hover:underline" to={legalAreas.find(area => area.category === cat.title)!.path}>Ver información del área<span className="sr-only">: {cat.title}</span></Link>
+                    )}
                     <AnimatePresence initial={false}>
                       {isOpen && (
                         <motion.div

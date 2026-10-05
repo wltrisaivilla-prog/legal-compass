@@ -14,7 +14,7 @@ globalThis.fetch = offline;
 http.request = http.get = https.request = https.get = offline;
 net.connect = net.createConnection = tls.connect = offline;
 
-const { render, renderMetadata, routeSeo, SITE_URL, getSiteYear } = await import("../.prerender/entry-server.js");
+const { render, renderMetadata, getRouteMetadata, routeSeo, SITE_URL, getSiteYear } = await import("../.prerender/entry-server.js");
 const buildYear = getSiteYear();
 const template = readFileSync("dist/index.html", "utf8");
 if (!template.includes("<!--app-html-->")) throw new Error("Missing prerender outlet");
@@ -46,7 +46,8 @@ for (const pathname of Object.keys(routeSeo)) {
     const elements = doc.querySelectorAll(selector);
     if (elements.length !== 1 || elements[0].getAttribute(attribute) !== value) throw new Error(`Invalid metadata: ${pathname} ${selector}`);
   }
-  if (doc.querySelectorAll("#faq-schema").length !== (pathname === "/faq" ? 1 : 0)) throw new Error(`Invalid FAQ schema: ${pathname}`);
+  if (doc.querySelectorAll("#faq-schema").length !== (getRouteMetadata(pathname).faqSchema ? 1 : 0)) throw new Error(`Invalid FAQ schema: ${pathname}`);
+  if (doc.querySelectorAll("#service-schema").length !== (getRouteMetadata(pathname).serviceSchema ? 1 : 0)) throw new Error(`Invalid Service schema: ${pathname}`);
   if (doc.querySelectorAll("#business-schema").length !== 1) throw new Error(`Duplicate business schema: ${pathname}`);
   for (const image of doc.querySelectorAll("img[src]")) {
     if (!existsSync(`dist${image.getAttribute("src")}`)) throw new Error(`Missing static image: ${pathname}`);

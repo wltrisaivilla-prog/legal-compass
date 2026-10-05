@@ -7,12 +7,12 @@
   # Direct index.html requests use the same canonical routes as navigation.
   # THE_REQUEST prevents redirecting our internal rewrites.
   RewriteCond %{THE_REQUEST} \s/+[^\s?]*index\.html[?\s] [NC]
-  RewriteRule ^(quienes-somos|servicios|documentos|faq|contacto)/index\.html$ /$1 [R=301,L]
+  RewriteRule ^(quienes-somos|servicios(?:/(?:derecho-laboral|derecho-penal|derecho-mercantil|derecho-familiar|bienes-raices|servicios-notariales))?|documentos|faq|contacto)/index\.html$ /$1 [R=301,L]
   RewriteCond %{THE_REQUEST} \s/+index\.html[?\s] [NC]
   RewriteRule ^index\.html$ / [R=301,L]
 
   # Serve canonical extensionless routes without Apache DirectorySlash redirects.
-  RewriteRule ^(quienes-somos|servicios|documentos|faq|contacto)/?$ $1/index.html [END]
+  RewriteRule ^(quienes-somos|servicios(?:/(?:derecho-laboral|derecho-penal|derecho-mercantil|derecho-familiar|bienes-raices|servicios-notariales))?|documentos|faq|contacto)/?$ $1/index.html [END]
 
   # Existing files and directories (assets, PDFs, DOCX, crawler files) pass through.
   RewriteCond %{REQUEST_FILENAME} -f [OR]

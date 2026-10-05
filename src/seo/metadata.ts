@@ -1,8 +1,11 @@
+import { legalAreas } from "../data/legal-areas";
 import { faqs } from "./faqs";
 import { routeSeo, SITE_URL } from "./routes";
 
 export function getRouteMetadata(pathname: string) {
   const path = pathname.replace(/\/+$/, "") || "/";
+  const area = legalAreas.find(item => item.path === path);
+  const questions = path === "/faq" ? faqs : area?.faqs;
   return {
     path,
     url: `${SITE_URL}${path}`,
@@ -11,11 +14,17 @@ export function getRouteMetadata(pathname: string) {
       description: "La página solicitada no está disponible. Consulte los servicios y la información de contacto de Litigios de Guatemala.",
     }),
     robots: routeSeo[path] ? "index, follow, max-snippet:-1, max-image-preview:large" : "noindex, follow",
-    faqSchema: path === "/faq" ? {
+    serviceSchema: area ? {
+      "@context": "https://schema.org", "@type": "Service",
+      "@id": `${SITE_URL}${path}#service`, name: area.name, serviceType: area.name,
+      url: `${SITE_URL}${path}`, description: area.description,
+      provider: { "@id": `${SITE_URL}/#firma` }, areaServed: "Guatemala",
+    } : null,
+    faqSchema: questions ? {
       "@context": "https://schema.org",
       "@type": "FAQPage",
-      "@id": `${SITE_URL}/faq#faq`,
-      mainEntity: faqs.map(faq => ({
+      "@id": `${SITE_URL}${path}#faq`,
+      mainEntity: questions.map(faq => ({
         "@type": "Question", name: faq.q,
         acceptedAnswer: { "@type": "Answer", text: faq.a },
       })),
@@ -32,7 +41,7 @@ export function escapeHtml(value: string) {
 export function renderMetadata(template: string, pathname: string) {
   const seo = getRouteMetadata(pathname);
   let html = template
-    .replace(/<script id="faq-schema"[^>]*>[\s\S]*?<\/script>/g, "")
+    .replace(/<script id="(?:faq|service)-schema"[^>]*>[\s\S]*?<\/script>/g, "")
     .replace(/<title>[\s\S]*?<\/title>/, () => `<title>${escapeHtml(seo.title)}</title>`);
   const tags: [string, string, string][] = [
     ["name", "description", seo.description], ["name", "robots", seo.robots],
@@ -47,9 +56,10 @@ export function renderMetadata(template: string, pathname: string) {
   }
   html = html.replace(/<link rel="canonical"[^>]*>/g, "");
   html = html.replace("</head>", () => `<link rel="canonical" href="${escapeHtml(seo.url)}" />\n  </head>`);
-  if (seo.faqSchema) {
-    const json = JSON.stringify(seo.faqSchema).replace(/</g, "\\u003c");
-    html = html.replace("</head>", () => `<script id="faq-schema" type="application/ld+json">${json}</script>\n  </head>`);
+  for (const [id, schema] of [["faq-schema", seo.faqSchema], ["service-schema", seo.serviceSchema]] as const) {
+    if (!schema) continue;
+    const json = JSON.stringify(schema).replace(/</g, "\\u003c");
+    html = html.replace("</head>", () => `<script id="${id}" type="application/ld+json">${json}</script>\n  </head>`);
   }
   return html;
 }

@@ -1,3 +1,4 @@
+import { getRouteMetadata } from "@/seo/metadata";
 import { act } from "react";
 import { hydrateRoot } from "react-dom/client";
 import { fireEvent, within } from "@testing-library/react";
@@ -44,7 +45,8 @@ describe("hydration and client interactions", () => {
       expect(document.querySelectorAll('link[rel="canonical"]')).toHaveLength(1);
       expect(document.querySelectorAll('meta[name="description"]')).toHaveLength(1);
       expect(document.querySelectorAll("#business-schema")).toHaveLength(1);
-      expect(document.querySelectorAll("#faq-schema")).toHaveLength(path === "/faq" ? 1 : 0);
+      expect(document.querySelectorAll("#faq-schema")).toHaveLength(getRouteMetadata(path).faqSchema ? 1 : 0);
+      expect(document.querySelectorAll("#service-schema")).toHaveLength(getRouteMetadata(path).serviceSchema ? 1 : 0);
       expect(container.querySelector("footer")?.textContent).not.toContain("1999");
 
       if (path === "/servicios") {
