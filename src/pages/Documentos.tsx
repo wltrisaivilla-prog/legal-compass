@@ -1,3 +1,4 @@
+import { signalConversion } from "@/lib/measurement";
 import Layout from "@/components/Layout";
 import AnimatedSection from "@/components/AnimatedSection";
 import { FileText, Star, Download, CheckCircle, Loader2, X, Eye } from "lucide-react";
@@ -99,6 +100,7 @@ const Documentos = () => {
 
       setDownloadUrl(data.downloadUrl);
       setDownloadFileName(data.fileName ?? null);
+      signalConversion("document_purchase_verified", doc.id);
       setDownloadState("success");
     } catch (err) {
       console.error("Error en verificación:", err);
@@ -167,6 +169,7 @@ const Documentos = () => {
                           </button>
                         )}
                         <button
+                          data-event="document_purchase_start" data-document={doc.id}
                           onClick={() => { setSelectedDoc(doc); }}
                           className="btn-gold text-sm !px-4 !py-2"
                         >
@@ -208,6 +211,7 @@ const Documentos = () => {
                       <h3 className="font-heading text-2xl font-bold text-foreground mb-2">¡Pago Exitoso!</h3>
                       <p className="text-muted-foreground mb-6">Ya puede descargar su documento editable.</p>
                       <a
+                        data-event="document_download" data-document={selectedDoc.id}
                         href={downloadUrl}
                         download={
                           downloadFileName

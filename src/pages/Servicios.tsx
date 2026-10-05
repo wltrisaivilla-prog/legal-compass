@@ -271,6 +271,9 @@ const Servicios = () => {
                                     <span className="text-sm text-foreground leading-snug">{s}</span>
                                   </div>
                                   <a
+                                    data-event="whatsapp_click"
+                                    data-intent="service_inquiry"
+                                    data-service={s}
                                     href={buildWhatsAppUrl(s)}
                                     target="_blank"
                                     rel="noopener noreferrer"

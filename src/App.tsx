@@ -1,3 +1,4 @@
+import RouteSeo from "@/seo/RouteSeo";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -21,6 +22,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+        <RouteSeo />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/quienes-somos" element={<QuienesSomos />} />

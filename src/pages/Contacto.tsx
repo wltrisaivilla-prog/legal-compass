@@ -1,3 +1,4 @@
+import { signalConversion } from "@/lib/measurement";
 import Layout from "@/components/Layout";
 import AnimatedSection from "@/components/AnimatedSection";
 import { useState, useEffect } from "react";
@@ -64,6 +65,7 @@ const Contacto = () => {
       if (!res.ok) throw new Error("Formspree error");
 
       toast({ title: "Mensaje enviado", description: "Su mensaje ha sido recibido. Nos pondremos en contacto pronto." });
+      signalConversion("contact_submit_success");
       setForm({ name: "", email: "", subject: "", message: "" });
     } catch (err) {
       console.error("Contact form error:", err);
@@ -85,7 +87,7 @@ const Contacto = () => {
         <div className="container mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12">
           <AnimatedSection>
             <h2 className="font-heading text-2xl font-bold text-foreground mb-6">Envíenos un Mensaje</h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form data-event="contact_submit" onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Nombre *</label>
                 <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="w-full border border-input rounded-md px-4 py-2.5 bg-background text-foreground focus:ring-2 focus:ring-ring focus:outline-none" maxLength={100} disabled={isSubmitting} required />
@@ -109,7 +111,7 @@ const Contacto = () => {
             </form>
 
             <div className="mt-8">
-              <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#25D366] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#20BD5B] transition-colors">
+              <a data-event="whatsapp_click" href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-[#25D366] text-white font-semibold px-6 py-3 rounded-md hover:bg-[#20BD5B] transition-colors">
                 <MessageCircle size={20} /> Chat en WhatsApp
               </a>
             </div>
@@ -129,7 +131,7 @@ const Contacto = () => {
                 <Phone className="text-gold mt-1 flex-shrink-0" size={20} />
                 <div>
                   <p className="font-semibold text-foreground">Teléfono</p>
-                  <a href="tel:+50258997508" className="text-muted-foreground text-sm hover:text-gold transition-colors">+502 5899 7508</a>
+                  <a data-event="phone_click" href="tel:+50258997508" className="text-muted-foreground text-sm hover:text-gold transition-colors">+502 5899 7508</a>
                 </div>
               </div>
               <div className="flex items-start gap-3">
