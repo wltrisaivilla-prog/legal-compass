@@ -19,7 +19,8 @@ const Contacto = () => {
       // Configuración para la zona horaria de Guatemala
       const opciones: Intl.DateTimeFormatOptions = { timeZone: "America/Guatemala", hour12: false, hour: "2-digit" };
       const horaGuate = parseInt(new Intl.DateTimeFormat("en-US", opciones).format(ahora));
-      const diaGuate = ahora.getDay(); 
+      const weekday = new Intl.DateTimeFormat("en-US", { timeZone: "America/Guatemala", weekday: "short" }).format(ahora);
+      const diaGuate = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(weekday);
 
       let estado = "Cerrado";
       let color = "#f87171"; // Rojo

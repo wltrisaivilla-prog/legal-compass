@@ -1,3 +1,4 @@
+import NoScriptContent from "@/components/NoScriptContent";
 import Layout from "@/components/Layout";
 import AnimatedSection from "@/components/AnimatedSection";
 import {
@@ -32,6 +33,7 @@ const FAQ = () => (
         </AnimatedSection>
       </div>
     </section>
+    <NoScriptContent sections={faqs.map(faq => ({ title: faq.q, paragraphs: [faq.a] }))} />
   </Layout>
 );
 

@@ -15,6 +15,7 @@ const navItems = [
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const currentPath = location.pathname.replace(/\/+$/, "") || "/";
 
   return (
     <nav className="bg-primary sticky top-0 z-50 shadow-lg">
@@ -35,7 +36,7 @@ const Navbar = () => {
               key={item.path}
               to={item.path}
               className={`text-sm font-medium transition-colors hover:text-gold ${
-                location.pathname === item.path
+                currentPath === item.path
                   ? "text-gold underline underline-offset-8"
                   : "text-primary-foreground"
               }`}
@@ -64,7 +65,7 @@ const Navbar = () => {
               to={item.path}
               onClick={() => setIsOpen(false)}
               className={`block px-6 py-3 text-sm font-medium transition-colors hover:text-gold ${
-                location.pathname === item.path ? "text-gold" : "text-primary-foreground"
+                currentPath === item.path ? "text-gold" : "text-primary-foreground"
               }`}
             >
               {item.label}

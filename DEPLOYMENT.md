@@ -17,16 +17,16 @@ del seguimiento no lo elimina del historial. El archivo local se conserva.
 1. Hacer una copia completa del contenido actual de `public_html`, incluidos archivos
    ocultos y `.htaccess`, fuera de la raíz pública. Conservar la copia del último build
    y su configuración. No iniciar el reemplazo sin este respaldo.
-2. Subir el **contenido** de `dist/` a `public_html`: `index.html`, `assets/`, `.htaccess`,
+2. Subir el **contenido** de `dist/` a `public_html`: `index.html`, `spa.html`, las cinco carpetas de rutas, `assets/`, `.htaccess`,
    `robots.txt`, `sitemap.xml`, `llms.txt`, favicon, documentos PDF/DOC/DOCX/ZIP y demás
    archivos públicos generados. No subir la carpeta `dist` como subcarpeta.
-3. Subir primero assets y documentos; reemplazar después `index.html` y los archivos
+3. Subir primero assets y documentos; reemplazar después los seis HTML de ruta, `spa.html` y los archivos
    de rastreo. Reemplazar únicamente archivos correspondientes a esta aplicación.
 4. **No borrar** otros sitios, subdirectorios, `.well-known`, archivos de validación,
    configuración de Hostinger, uploads, documentos existentes ni los assets del build
    anterior durante la transición. No subir `.env`, fuentes, `.git` o `node_modules`.
 5. Antes de reemplazar `.htaccess`, comprobar si ya existe en `public_html` y comparar
-   sus reglas. Integrar el fallback SPA después de reglas específicas existentes;
+   sus reglas. Integrar la prioridad de HTML estático y el fallback SPA después de reglas específicas existentes;
    conservar HTTPS, redirecciones, caché, seguridad y reglas de otras aplicaciones.
    La propuesta requiere Apache 2.4, `mod_rewrite` y permiso de overrides. Si no hay
    archivo previo, instalar el generado. Activar la visualización de archivos ocultos
@@ -37,7 +37,7 @@ del seguimiento no lo elimina del historial. El archivo local se conserva.
    Revisar los archivos de rastreo, imágenes y documentos y que un asset inexistente
    devuelva 404. Formspree y PayPal requieren una prueba autorizada separada de envío
    y pago reales; no realizar operaciones reales como parte de una prueba de humo.
-7. Para rollback, restaurar desde la copia previa `index.html`, assets, documentos,
+7. Para rollback, restaurar desde la copia previa todos los HTML y carpetas de rutas, assets, documentos,
    archivos de rastreo y el `.htaccess` original como un conjunto. Limpiar caché de
    Hostinger/CDN si corresponde y repetir las comprobaciones de rutas y archivos.
 
@@ -54,24 +54,69 @@ El sitemap ya contiene las seis rutas reales y ninguna fecha lastmod inventada.
 robots.txt y llms.txt mantienen los bots permitidos y las URLs actuales.
 Los permisos de robots permiten rastreo, pero no garantizan indexación ni citas por IA.
 
-## Prerender/SSG: siguiente tarea
+## Prerender/SSG implementado
 
-Esta fase mantiene el render del cliente. **Los metadatos de rutas requieren JavaScript**;
-no se presenta este trabajo como prerender ni como HTML completo rastreable sin JS.
-Se evaluó usar un navegador headless sobre `vite preview` para guardar el HTML de las
-seis rutas: evita migrar de framework, pero capturar el DOM actual también captura
-animaciones, contenido inicialmente oculto, horarios dinámicos y la integración de
-PayPal. El código actual usa `createRoot`, no hidratación; cambiar ese contrato merece
-una fase separada para evitar parpadeos y diferencias de hidratación.
+El build compila el cliente con Vite, compila un entry SSR temporal en
+.prerender/ y ejecuta scripts/prerender.mjs. React renderToString y StaticRouter
+generan seis páginas sin navegador ni servidor en producción. El generador bloquea
+fetch y conexiones HTTP/TCP: una petición durante el render falla el build.
+No se agregaron dependencias ni se cambió de framework.
 
-Siguiente tarea propuesta: separar contenido estático de integraciones del navegador,
-evaluar renderToString + StaticRouter con un entry SSR de Vite o un prerender headless,
-generar seis HTML con metadatos/schema desde las mismas fuentes y verificar contenido
-sin JS, hidratación, React Router, FAQ, formularios y compra. Asegurar reglas Apache
-que sirvan los HTML de ruta sin introducir redirecciones/canonical inconsistentes.
+src/seo/routes.ts sigue siendo la fuente de títulos/descripciones. El HTML y el
+cliente comparten src/seo/metadata.ts. El schema empresarial original se conserva
+en la plantilla; FAQPage se genera solamente para /faq. El build comprueba cuerpos
+y títulos distintos, metadatos únicos, canonical, schema, imágenes y contenido
+visible. Los tests verifican SSR sin navegador e hidratación de las seis páginas.
 
-Referencias: [Vite static deploy](https://vite.dev/guide/static-deploy),
-[Vite SSR](https://vite.dev/guide/ssr),
+El cliente usa hydrateRoot y continúa con BrowserRouter. Un contexto mantiene el
+primer render igual al HTML: las animaciones de entrada dejan el contenido visible
+inicialmente; animaciones posteriores, hover, carrusel y modales continúan.
+El año del build se transmite al cliente y se actualiza tras hidratar; los horarios
+se calculan en un efecto con zona America/Guatemala. PayPal se carga después de
+hidratar y Supabase se importa dentro del evento de aprobación de pago.
+FAQ y Servicios incluyen una alternativa noscript desde sus mismos datos para
+mostrar respuestas y catálogo sin JS. Con JS mantienen sus controles originales.
+Búsqueda, formulario, mapa, compra y descarga requieren el cliente y sus proveedores.
+
+Estructura final:
+
+```text
+dist/
+  index.html
+  quienes-somos/index.html
+  servicios/index.html
+  documentos/index.html
+  faq/index.html
+  contacto/index.html
+  spa.html
+  assets/
+  .htaccess
+  robots.txt
+  sitemap.xml
+  llms.txt
+  _redirects
+  [favicon, imágenes públicas y documentos existentes]
+```
+
+Apache 2.4 sirve primero los HTML de rutas conocidas, preserva archivos reales y
+entrega spa.html para rutas desconocidas sin extensión. React muestra su 404 con
+noindex; la respuesta conserva HTTP 200 (soft 404), limitación del fallback estático.
+Recursos inexistentes con extensión deben responder 404. Accesos explícitos a
+/servicios/index.html, etc., redirigen al canonical. Vite preview incorpora
+middleware equivalente para comprobar la prioridad de rutas. Las reglas reales
+deben verificarse manualmente en Hostinger: no se utilizó Apache local ni se aplicó
+este build a producción.
+
+Subir únicamente dist/: .prerender/ contiene código de servidor temporal y no se
+despliega. Recompilar al cambiar contenido/configuración; no hay SSR en vivo.
+Después de comprobar producción y dejar pasar cachés/sesiones anteriores, pueden
+retirarse solamente assets con hashes antiguos que ningún HTML vigente referencie.
+Conservar el respaldo para rollback. No borrar documentos, uploads, .well-known,
+reglas del hosting ni carpetas ajenas. Si el respaldo no tenía las cinco carpetas
+de rutas o spa.html, retirarlas al hacer rollback para evitar prioridad del HTML nuevo.
+
+Referencias: [Vite SSR](https://vite.dev/guide/ssr),
+[React hydrateRoot](https://react.dev/reference/react-dom/client/hydrateRoot),
 [Apache rewrite flags](https://httpd.apache.org/docs/2.4/rewrite/flags.html).
 
 ## Imágenes y preparación de medición

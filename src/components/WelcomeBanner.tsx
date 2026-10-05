@@ -1,3 +1,4 @@
+import { useHydrated } from "@/hooks/use-hydrated";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { FileText, MessageCircle, Scale } from "lucide-react";
@@ -5,6 +6,7 @@ import licenciado from "@/assets/licenciado.png";
 
 
 const WelcomeBanner = () => {
+  const hydrated = useHydrated();
   return (
     <section className="relative bg-navy-dark text-primary-foreground">
       {/* Fade into the photo section above */}
@@ -14,7 +16,7 @@ const WelcomeBanner = () => {
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
         <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
           <motion.div
-            initial={{ opacity: 0, x: -30 }}
+            initial={hydrated ? { opacity: 0, x: -30 } : false}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: "easeOut" }}
@@ -33,7 +35,7 @@ const WelcomeBanner = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 30 }}
+            initial={hydrated ? { opacity: 0, x: 30 } : false}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: "easeOut", delay: 0.15 }}

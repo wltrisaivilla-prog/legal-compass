@@ -1,3 +1,4 @@
+import { useHydrated } from "@/hooks/use-hydrated";
 import { useState, useEffect, useCallback } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -18,6 +19,7 @@ const slides = [
 ];
 
 const HeroCarousel = () => {
+  const hydrated = useHydrated();
   const [current, setCurrent] = useState(0);
   const next = useCallback(() => setCurrent((c) => (c + 1) % slides.length), []);
   const prev = useCallback(() => setCurrent((c) => (c - 1 + slides.length) % slides.length), []);
@@ -45,7 +47,7 @@ const HeroCarousel = () => {
         <AnimatePresence mode="wait">
           <motion.div
             key={current}
-            initial={{ opacity: 0, y: 20 }}
+            initial={hydrated ? { opacity: 0, y: 20 } : false}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.5 }}

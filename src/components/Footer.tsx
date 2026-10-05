@@ -1,7 +1,9 @@
+import { useSiteYear } from "@/hooks/use-hydrated";
 import { Link } from "react-router-dom";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
 
 const Footer = () => {
+  const year = useSiteYear();
   return (
     <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -84,7 +86,7 @@ const Footer = () => {
 
       <div className="border-t border-white/10">
         <div className="container mx-auto py-4 text-center text-xs text-primary-foreground/60">
-          © {new Date().getFullYear()} Litigios de Guatemala | Abogados en Ciudad de Guatemala, Zona 4.
+          © {year} Litigios de Guatemala | Abogados en Ciudad de Guatemala, Zona 4.
         </div>
       </div>
     </footer>
