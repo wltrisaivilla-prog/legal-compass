@@ -1,3 +1,5 @@
+import LegalArea from "./pages/LegalArea";
+import { legalAreas } from "./data/legal-areas";
 import { HydrationProvider } from "@/components/HydrationProvider";
 import RouteSeo from "@/seo/RouteSeo";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -28,6 +30,7 @@ const AppContent = ({ buildYear }: { buildYear?: number }) => (
           <Route path="/" element={<Index />} />
           <Route path="/quienes-somos" element={<QuienesSomos />} />
           <Route path="/servicios" element={<Servicios />} />
+          {legalAreas.map(area => <Route key={area.path} path={area.path} element={<LegalArea />} />)}
           <Route path="/documentos" element={<Documentos />} />
           <Route path="/contacto" element={<Contacto />} />
           <Route path="/faq" element={<FAQ />} />

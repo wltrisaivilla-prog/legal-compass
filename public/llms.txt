@@ -32,3 +32,11 @@
 - [Documentos](https://fuentes-asociados.com/documentos): plantillas legales con vista previa en PDF y entrega en Word tras el pago.
 - [Preguntas Frecuentes](https://fuentes-asociados.com/faq): costos, plazos, cobertura y validez de los documentos.
 - [Contacto](https://fuentes-asociados.com/contacto): formulario, teléfono y ubicación.
+
+## Información por área legal
+- [Derecho Laboral](https://fuentes-asociados.com/servicios/derecho-laboral): despidos, reinstalaciones, indemnización post mortem y procesos contra el Estado.
+- [Derecho Penal](https://fuentes-asociados.com/servicios/derecho-penal): hechos de tránsito, conciliaciones y procesos penales.
+- [Derecho Mercantil](https://fuentes-asociados.com/servicios/derecho-mercantil): sociedades, empresas, asambleas y documentación mercantil.
+- [Derecho Familiar](https://fuentes-asociados.com/servicios/derecho-familiar): pensiones alimenticias, obligación de hacer y juicios de ejecución.
+- [Bienes Raíces](https://fuentes-asociados.com/servicios/bienes-raices): compraventas, división, usufructo, hipotecas y otros servicios inmobiliarios.
+- [Servicios Notariales](https://fuentes-asociados.com/servicios/servicios-notariales): actas, legalizaciones, mandatos y contratos del catálogo.

@@ -1,3 +1,4 @@
+import { getRouteMetadata } from "@/seo/metadata";
 // @vitest-environment node
 import { readFileSync } from "node:fs";
 import { describe, expect, it, vi } from "vitest";
@@ -27,10 +28,10 @@ describe("offline static rendering", () => {
         const dom = new JSDOM(html);
         const doc = dom.window.document;
         expect(doc.querySelector("h1")?.textContent).toBeTruthy();
-        expect(doc.querySelector("main")?.textContent).toContain(content[path]);
+        expect(doc.querySelector("main")?.textContent).toContain(content[path] ?? "Servicios que atendemos");
         expect(doc.title).toBe(seo.title);
         expect(doc.querySelector('link[rel="canonical"]')?.getAttribute("href")).toBe(SITE_URL + path);
-        expect(doc.querySelectorAll("#faq-schema")).toHaveLength(path === "/faq" ? 1 : 0);
+        expect(doc.querySelectorAll("#faq-schema")).toHaveLength(getRouteMetadata(path).faqSchema ? 1 : 0);
         expect(doc.querySelectorAll("#business-schema")).toHaveLength(1);
         expect(markup).not.toContain('opacity:0');
         expect(markup).not.toContain("paypal.com/sdk");

@@ -1,6 +1,9 @@
+import { legalAreas } from "../data/legal-areas";
+
 export const SITE_URL = "https://fuentes-asociados.com";
 
 export const routeSeo: Record<string, { title: string; description: string }> = {
+  ...Object.fromEntries(legalAreas.map(area => [area.path, { title: area.title, description: area.description }])),
   "/": {
     title: "Litigios de Guatemala | Abogados en Ciudad de Guatemala",
     description: "Firma de abogados en Ciudad de Guatemala con más de 25 años de experiencia. Conozca nuestros servicios legales y agende una consulta inicial gratuita.",

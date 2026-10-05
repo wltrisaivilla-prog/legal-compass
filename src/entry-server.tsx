@@ -9,3 +9,5 @@ export { renderMetadata } from "./seo/metadata";
 export function render(pathname: string, buildYear = getSiteYear()) {
   return renderToString(<StaticRouter location={pathname}><AppContent buildYear={buildYear} /></StaticRouter>);
 }
+
+export { getRouteMetadata } from "./seo/metadata";

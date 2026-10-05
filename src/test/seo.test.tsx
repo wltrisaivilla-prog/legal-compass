@@ -1,3 +1,4 @@
+import { getRouteMetadata } from "@/seo/metadata";
 import { readFileSync } from "node:fs";
 import { render, cleanup, act } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
@@ -24,7 +25,8 @@ describe("route SEO", () => {
         expect(document.querySelectorAll(`meta[${attribute}="${key}"]`)).toHaveLength(1);
         expect(document.querySelector(`meta[${attribute}="${key}"]`)).toHaveAttribute("content", value);
       }
-      expect(document.querySelectorAll("#faq-schema")).toHaveLength(path === "/faq" ? 1 : 0);
+      expect(document.querySelectorAll("#service-schema")).toHaveLength(getRouteMetadata(path).serviceSchema ? 1 : 0);
+      expect(document.querySelectorAll("#faq-schema")).toHaveLength(getRouteMetadata(path).faqSchema ? 1 : 0);
     });
   }
 
