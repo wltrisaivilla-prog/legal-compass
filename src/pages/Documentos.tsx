@@ -5,7 +5,7 @@ import { FileText, Star, Download, CheckCircle, Loader2, X, Eye } from "lucide-r
 import { useState, useCallback } from "react";
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
 import { motion, AnimatePresence } from "framer-motion";
-import { supabase } from "@/integrations/supabase/client";
+import { useHydrated } from "@/hooks/use-hydrated";
 
 // Cliente PayPal: el Client ID es público por diseño (va en el frontend del SDK de PayPal).
 // Se permite override por variable de entorno para entornos de prueba.
@@ -79,6 +79,7 @@ const documents = [
 type DocType = typeof documents[0];
 
 const Documentos = () => {
+  const hydrated = useHydrated();
   const [selectedDoc, setSelectedDoc] = useState<DocType | null>(null);
   const [previewDoc, setPreviewDoc] = useState<DocType | null>(null);
   const [downloadState, setDownloadState] = useState<"idle" | "processing" | "success">("idle");
@@ -90,6 +91,7 @@ const Documentos = () => {
     setDownloadState("processing");
     setErrorMessage(null);
     try {
+      const { supabase } = await import("@/integrations/supabase/client");
       const { data, error } = await supabase.functions.invoke("verify-payment", {
         body: { orderId, documentId: doc.id },
       });
@@ -124,7 +126,7 @@ const Documentos = () => {
   const closePreview = useCallback(() => setPreviewDoc(null), []);
 
   return (
-    <PayPalScriptProvider options={{ clientId: PAYPAL_CLIENT_ID, currency: "USD", intent: "capture" }}>
+    <PayPalScriptProvider deferLoading={!hydrated} options={{ clientId: PAYPAL_CLIENT_ID, currency: "USD", intent: "capture" }}>
       <Layout>
         <section className="bg-primary py-16 text-center">
           <h1 className="font-heading text-4xl text-primary-foreground italic font-bold">Documentos Legales</h1>

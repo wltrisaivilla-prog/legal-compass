@@ -1,5 +1,4 @@
-import { faqs } from "./faqs";
-import { routeSeo, SITE_URL } from "./routes";
+import { getRouteMetadata } from "./metadata";
 
 function setMeta(attribute: "name" | "property", key: string, content: string) {
   const matches = document.head.querySelectorAll<HTMLMetaElement>(`meta[${attribute}="${key}"]`);
@@ -11,15 +10,11 @@ function setMeta(attribute: "name" | "property", key: string, content: string) {
 }
 
 export function applyRouteSeo(pathname: string) {
-  const path = pathname.replace(/\/+$/, "") || "/";
-  const seo = routeSeo[path] ?? {
-    title: "Página no encontrada | Litigios de Guatemala",
-    description: "La página solicitada no está disponible. Consulte los servicios y la información de contacto de Litigios de Guatemala.",
-  };
-  const url = `${SITE_URL}${path}`;
+  const seo = getRouteMetadata(pathname);
+  const url = seo.url;
   document.title = seo.title;
   setMeta("name", "description", seo.description);
-  setMeta("name", "robots", routeSeo[path] ? "index, follow, max-snippet:-1, max-image-preview:large" : "noindex, follow");
+  setMeta("name", "robots", seo.robots);
   setMeta("property", "og:title", seo.title);
   setMeta("property", "og:description", seo.description);
   setMeta("property", "og:url", url);
@@ -33,19 +28,11 @@ export function applyRouteSeo(pathname: string) {
   canonicals.forEach((element, index) => { if (index > 0) element.remove(); });
 
   document.head.querySelectorAll('script[data-route-schema], script#faq-schema').forEach(element => element.remove());
-  if (path === "/faq") {
+  if (seo.faqSchema) {
     const script = document.createElement("script");
     script.id = "faq-schema";
     script.type = "application/ld+json";
-    script.textContent = JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "FAQPage",
-      "@id": `${SITE_URL}/faq#faq`,
-      mainEntity: faqs.map(faq => ({
-        "@type": "Question", name: faq.q,
-        acceptedAnswer: { "@type": "Answer", text: faq.a },
-      })),
-    });
+    script.textContent = JSON.stringify(seo.faqSchema);
     document.head.append(script);
   }
 }

@@ -1,5 +1,10 @@
-import { createRoot } from "react-dom/client";
+import { createRoot, hydrateRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 
-createRoot(document.getElementById("root")!).render(<App />);
+const root = document.getElementById("root")!;
+if (root.dataset.prerendered === "true") {
+  hydrateRoot(root, <App buildYear={Number(root.dataset.buildYear)} />);
+} else {
+  createRoot(root).render(<App />);
+}

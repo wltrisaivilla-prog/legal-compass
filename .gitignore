@@ -27,3 +27,6 @@ dist-ssr
 .env
 .env.*
 !.env.example
+
+# Temporary server bundle for static generation (never deploy)
+.prerender/

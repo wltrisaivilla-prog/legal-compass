@@ -1,3 +1,4 @@
+import NoScriptContent from "@/components/NoScriptContent";
 import Layout from "@/components/Layout";
 import AnimatedSection from "@/components/AnimatedSection";
 import {
@@ -297,7 +298,8 @@ const Servicios = () => {
           </div>
         </div>
       </section>
-    </Layout>
+      <NoScriptContent sections={categorias.map(cat => ({ title: cat.title, paragraphs: cat.servicios }))} />
+  </Layout>
   );
 };
 
